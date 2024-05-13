@@ -72,12 +72,14 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     //Dagger-Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
     //google devtools
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.0.0-RC3-1.0.20")
+    implementation(libs.com.google.devtools.ksp.gradle.plugin)
     //Desurgaring
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    implementation(libs.androidx.ui.text.google.fonts)
 }
 
 // Allow references to generated code
