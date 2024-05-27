@@ -1,4 +1,4 @@
-package com.example.studysmartandroidapp.ui.theme
+package com.example.studysmartandroidapp.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -24,7 +24,7 @@ val ubuntuFontFamily = FontFamily(
 
 val salsaFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("salsa"),
+        googleFont = GoogleFont("Salsa"),
         fontProvider = provider
     )
 )
