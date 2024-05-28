@@ -20,7 +20,7 @@ import com.example.studysmartandroidapp.R
 
 @Composable
 fun SubjectCard(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     subjectName: String,
     gradientColors: List<Color>,
     onClick: () -> Unit
@@ -28,7 +28,7 @@ fun SubjectCard(
     Box(
         modifier =  Modifier
             .size(150.dp)
-            .clickable { onClick }
+            .clickable { onClick() }
             .background(
                 brush = Brush.verticalGradient(gradientColors),
                 shape = MaterialTheme.shapes.medium
@@ -45,7 +45,7 @@ fun SubjectCard(
             )
 
             Text(
-                text = "",
+                text = subjectName,
                 style = MaterialTheme.typography.headlineMedium,
                 color = Color.White
             )
