@@ -122,8 +122,8 @@ fun DashboardScreen(){
             item{//subject cards
                 SubjectCardsSection(
                     modifier = Modifier.fillMaxWidth(),
-                    subjectsList = emptyList()
-                    //subjectsList = subjects
+                    //subjectsList = emptyList()
+                    subjectsList = subjects
                 )
             }
 
