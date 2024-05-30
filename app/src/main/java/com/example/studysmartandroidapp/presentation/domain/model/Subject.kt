@@ -8,6 +8,7 @@ import com.example.studysmartandroidapp.presentation.theme.gradient4
 import com.example.studysmartandroidapp.presentation.theme.gradient5
 
 data class Subject(
+    val subjectId: Int,
     val subjectName: String,
     val goalStudyHours: Float,
     val colors: List<Color>
