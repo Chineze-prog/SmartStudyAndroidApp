@@ -18,14 +18,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.R
-import com.example.studysmartandroidapp.presentation.domain.model.Task
+import com.example.studysmartandroidapp.presentation.domain.model.Session
 
-fun LazyListScope.tasksList(
+fun LazyListScope.studySessionsList(
     sectionTitle: String,
-    tasks: List<Task>,
+    sessions: List<Session>,
     emptyListText: String,
-    onTaskCardClick: (Int?) -> Unit,
-    onCheckBoxClick: (Task) -> Unit
+    onDeleteIconClick: (Session) -> Unit
 ){
     item{
         Text(
@@ -35,7 +34,7 @@ fun LazyListScope.tasksList(
         )
     }
 
-    if(tasks.isEmpty()){
+    if(sessions.isEmpty()){
         item{
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -45,7 +44,7 @@ fun LazyListScope.tasksList(
                     modifier = Modifier
                         .size(120.dp)
                         .align(Alignment.CenterHorizontally),
-                    painter = painterResource(R.drawable.img_tasks),
+                    painter = painterResource(R.drawable.img_lamp),
                     contentDescription = emptyListText
                 )
 
@@ -61,12 +60,11 @@ fun LazyListScope.tasksList(
         }
     }
 
-    items(tasks){task ->
-        TaskCard(
+    items(sessions){session ->
+        StudySessionCard(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-            task = task,
-            onCheckBoxClick = { onCheckBoxClick(task) },
-            onClick = {onTaskCardClick(task.taskId)}
+            session = session,
+            onDeleteClick = {onDeleteIconClick(session)}
         )
     }
 }

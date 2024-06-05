@@ -14,11 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.presentation.domain.model.Task
+import com.example.studysmartandroidapp.presentation.utils.Priority
 
 @Composable
 fun TaskCard(
@@ -36,7 +36,7 @@ fun TaskCard(
         ) {
             TaskCheckBox(
                 isComplete = task.isComplete,
-                borderColor = Color.Black,
+                borderColor = Priority.fromInt(task.priority).color,
                 onCheckBoxClick = onCheckBoxClick
             )
 

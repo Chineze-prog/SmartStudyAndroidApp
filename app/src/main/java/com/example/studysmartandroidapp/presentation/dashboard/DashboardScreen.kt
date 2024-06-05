@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,7 +35,9 @@ import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.R
 import com.example.studysmartandroidapp.presentation.components.CountCard
 import com.example.studysmartandroidapp.presentation.components.SubjectCard
+import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.presentation.components.tasksList
+import com.example.studysmartandroidapp.presentation.domain.model.Session
 import com.example.studysmartandroidapp.presentation.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.domain.model.Task
 
@@ -56,7 +59,7 @@ fun DashboardScreen(){
             title = "Prepare notes",
             description = "",
             dueDate = 0L,
-            priority = 1,
+            priority = 0,
             relatedSubject = "",
             isComplete = false
         ),
@@ -76,7 +79,7 @@ fun DashboardScreen(){
             title = "Go Cooking",
             description = "",
             dueDate = 0L,
-            priority = 1,
+            priority = 2,
             relatedSubject = "",
             isComplete = false
         ),
@@ -96,9 +99,54 @@ fun DashboardScreen(){
             title = "Write Poem",
             description = "",
             dueDate = 0L,
-            priority = 1,
+            priority = 0,
             relatedSubject = "",
             isComplete = true
+        )
+    )
+
+    val sessions = listOf(
+        Session(
+            sessionId = 0,
+            sessionSubjectId = 0,
+            relatedSubject = "English",
+            date = 0L,
+            duration = 2
+        ),
+        Session(
+            sessionId = 0,
+            sessionSubjectId = 0,
+            relatedSubject = "Maths",
+            date = 0L,
+            duration = 2
+        ),
+        Session(
+            sessionId = 0,
+            sessionSubjectId = 0,
+            relatedSubject = "Physics",
+            date = 0L,
+            duration = 2
+        ),
+        Session(
+            sessionId = 0,
+            sessionSubjectId = 0,
+            relatedSubject = "Psychology",
+            date = 0L,
+            duration = 2
+        ),
+        Session(
+            sessionId = 0,
+            sessionSubjectId = 0,
+            relatedSubject = "Computer Science",
+            date = 0L,
+            duration = 2
+        ),
+        Session(
+            sessionId = 0,
+            sessionSubjectId = 0,
+            relatedSubject = "Biology",
+            date = 0L,
+            duration = 2
         )
     )
 
@@ -142,7 +190,22 @@ fun DashboardScreen(){
                 //tasks = emptyList(),
                 tasks = tasks,
                 emptyListText = "You don't have any upcoming tasks.\n Click the + button in the" +
-                        " subject screen to add a new task."
+                        " subject screen to add a new task.",
+                onTaskCardClick = {},
+                onCheckBoxClick = {}
+            )
+
+            item{
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            studySessionsList(
+                sectionTitle = "RECENT STUDY SESSIONS",
+                sessions = emptyList(),
+                //sessions = sessions,
+                emptyListText = "You don't have any recent study sessions.\n Start a study " +
+                        "session to begin recording your progress.",
+                onDeleteIconClick = {}
             )
         }
     }
