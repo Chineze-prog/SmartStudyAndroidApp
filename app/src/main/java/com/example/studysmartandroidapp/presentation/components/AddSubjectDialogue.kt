@@ -44,6 +44,29 @@ fun AddSubjectDialogue(
     onSubjectNameChange: (String) -> Unit,
     onGoalStudyHoursChange: (String) -> Unit
 ){
+    var subjectNameError by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
+
+    subjectNameError = when{
+        subjectName.isBlank() -> "Please enter subject name."
+        subjectName.length < 2 -> "Subject Name is too short."
+        subjectName.length > 20 -> "Subject Name is too long."
+        else -> null
+    }
+
+    var goalStudyHoursError by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
+
+    goalStudyHoursError = when{
+        goalStudyHours.isBlank() -> "Please enter goal study hours."
+        goalStudyHours.toFloatOrNull() == null -> "Invalid number."
+        goalStudyHours.toFloat() < 1f -> "Please set to at least 1 hour."
+        goalStudyHours.toFloat() > 1000f -> "Please set a maximum of 1000 hours."
+        else -> null
+    }
+
     if(isOpen) {
         AlertDialog(
             title = { Text(text = title) },
@@ -61,8 +84,12 @@ fun AddSubjectDialogue(
                                     .clickable { onColorChange(color) }
                                     .size(24.dp)
                                     .clip(CircleShape)
-                                    .border(width = 1.dp, color =  if (color == selectedColors)
-                                        Color.Black else Color.Transparent)
+                                    .border(
+                                        width = 2.dp,
+                                        color = if (color == selectedColors) Color.Black
+                                        else Color.Transparent,
+                                        shape = CircleShape
+                                    )
                                     .background(brush = Brush.horizontalGradient(color))
                             )
                         }
@@ -73,8 +100,9 @@ fun AddSubjectDialogue(
                         onValueChange = onSubjectNameChange,
                         label = { Text(text = "Subject Name")},
                         singleLine = true,
-                        supportingText = { Text(text = "Please enter subject name")}
-                    )
+                        isError = subjectNameError != null && subjectName.isNotBlank(),
+                        supportingText = { Text(text = subjectNameError.orEmpty())},
+                        )
 
                     Spacer(modifier = Modifier.height(10.dp))
 
@@ -83,14 +111,18 @@ fun AddSubjectDialogue(
                         onValueChange = onGoalStudyHoursChange,
                         label = { Text(text = "Goal Study Hours")},
                         singleLine = true,
-                        supportingText = { Text(text = "Please enter goal study hours")},
+                        isError = goalStudyHoursError != null && goalStudyHours.isNotBlank(),
+                        supportingText = { Text(text = goalStudyHoursError.orEmpty())},
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
             },
             onDismissRequest = onDismissRequest,
             confirmButton = {
-                TextButton(onClick = onConfirmButtonClick) {
+                TextButton(
+                    onClick = onConfirmButtonClick,
+                    enabled = subjectNameError == null && goalStudyHoursError == null
+                ) {
                     Text(text = "Save")
                 }
             },
