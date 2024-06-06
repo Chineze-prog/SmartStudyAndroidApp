@@ -26,6 +26,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.R
+import com.example.studysmartandroidapp.presentation.components.AddSubjectDialogue
 import com.example.studysmartandroidapp.presentation.components.CountCard
 import com.example.studysmartandroidapp.presentation.components.SubjectCard
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
@@ -150,6 +155,34 @@ fun DashboardScreen(){
         )
     )
 
+    var isAddSubjectDialogueOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var subjectName by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var goalStudyHours by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var selectedColor by rememberSaveable {
+        mutableStateOf(Subject.subjectCardColors.random())
+    }
+
+    AddSubjectDialogue(
+        isOpen = isAddSubjectDialogueOpen,
+        subjectName = subjectName,
+        goalStudyHours = goalStudyHours,
+        selectedColors = selectedColor,
+        onDismissRequest = {isAddSubjectDialogueOpen = false},
+        onConfirmButtonClick = {isAddSubjectDialogueOpen = false},
+        onColorChange = {newValue -> selectedColor = newValue},
+        onSubjectNameChange = {newValue -> subjectName = newValue},
+        onGoalStudyHoursChange = {newValue -> goalStudyHours = newValue}
+    )
+
     Scaffold( topBar = { DashboardScreenTopBar() }) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -171,7 +204,8 @@ fun DashboardScreen(){
                 SubjectCardsSection(
                     modifier = Modifier.fillMaxWidth(),
                     //subjectsList = emptyList()
-                    subjectsList = subjects
+                    subjectsList = subjects,
+                    onAddIconClick = {isAddSubjectDialogueOpen = true}
                 )
             }
 
@@ -179,7 +213,7 @@ fun DashboardScreen(){
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal =48.dp, vertical = 20.dp),
+                        .padding(horizontal = 48.dp, vertical = 20.dp),
                     onClick = { /*TODO*/ }) {
                         Text(text = "Start Study Session")
                 }
@@ -201,10 +235,10 @@ fun DashboardScreen(){
 
             studySessionsList(
                 sectionTitle = "RECENT STUDY SESSIONS",
-                sessions = emptyList(),
-                //sessions = sessions,
+                //sessions = emptyList(),
+                sessions = sessions,
                 emptyListText = "You don't have any recent study sessions.\n Start a study " +
-                        "session to begin recording your progress.",
+                        "session to begin recording your progress.\n",
                 onDeleteIconClick = {}
             )
         }
@@ -258,7 +292,8 @@ private fun SubjectCardsSection(
     modifier: Modifier,
     subjectsList: List<Subject>,
     emptyListText: String = "You currently don't have any subjects.\n Click the + button to add " +
-            "a new subject"
+            "a new subject",
+    onAddIconClick: () -> Unit
 ){
     Column (modifier = modifier){
         Row (
@@ -272,7 +307,7 @@ private fun SubjectCardsSection(
                 modifier = Modifier.padding(start = 12.dp)
             )
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onAddIconClick) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Subject"

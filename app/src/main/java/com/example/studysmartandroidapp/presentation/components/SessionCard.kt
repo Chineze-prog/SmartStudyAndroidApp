@@ -28,8 +28,7 @@ fun StudySessionCard(
 ){
     Card(modifier = modifier) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.padding(start = 12.dp)) {
@@ -40,27 +39,26 @@ fun StudySessionCard(
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                //may need to remove
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
                     text = "${session.date}",
                     style = MaterialTheme.typography.bodySmall
                 )
+            }
 
-                Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-                Text(
-                    text = "${session.duration}",
-                    style = MaterialTheme.typography.titleMedium
+            Text(
+                text = "${session.duration} hr",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete Session"
                 )
-
-                IconButton(onClick = onDeleteClick) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Session"
-                    )
-                }
             }
         }
     }
