@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.R
 
+//each subject created will have a stock image of books
 @Composable
 fun SubjectCard(
     modifier: Modifier = Modifier,

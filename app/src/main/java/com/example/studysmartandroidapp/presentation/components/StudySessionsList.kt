@@ -34,6 +34,7 @@ fun LazyListScope.studySessionsList(
         )
     }
 
+    //if the sessions list is empty, show a stock image
     if(sessions.isEmpty()){
         item{
             Column(
@@ -64,7 +65,7 @@ fun LazyListScope.studySessionsList(
         StudySessionCard(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             session = session,
-            onDeleteClick = {onDeleteIconClick(session)}
+            onDeleteClick = { onDeleteIconClick(session) }
         )
     }
 }

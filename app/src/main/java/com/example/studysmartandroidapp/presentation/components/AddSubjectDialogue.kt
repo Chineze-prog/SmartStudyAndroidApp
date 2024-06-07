@@ -44,9 +44,7 @@ fun AddSubjectDialogue(
     onSubjectNameChange: (String) -> Unit,
     onGoalStudyHoursChange: (String) -> Unit
 ){
-    var subjectNameError by rememberSaveable {
-        mutableStateOf<String?>(null)
-    }
+    var subjectNameError by rememberSaveable { mutableStateOf <String?> (null) }
 
     subjectNameError = when{
         subjectName.isBlank() -> "Please enter subject name."
@@ -55,9 +53,7 @@ fun AddSubjectDialogue(
         else -> null
     }
 
-    var goalStudyHoursError by rememberSaveable {
-        mutableStateOf<String?>(null)
-    }
+    var goalStudyHoursError by rememberSaveable { mutableStateOf <String?> (null) }
 
     goalStudyHoursError = when{
         goalStudyHours.isBlank() -> "Please enter goal study hours."
@@ -98,21 +94,21 @@ fun AddSubjectDialogue(
                     OutlinedTextField(
                         value = subjectName,
                         onValueChange = onSubjectNameChange,
-                        label = { Text(text = "Subject Name")},
+                        label = { Text(text = "Subject Name") },
                         singleLine = true,
                         isError = subjectNameError != null && subjectName.isNotBlank(),
-                        supportingText = { Text(text = subjectNameError.orEmpty())},
-                        )
+                        supportingText = { Text(text = subjectNameError.orEmpty()) }
+                    )
 
                     Spacer(modifier = Modifier.height(10.dp))
 
                     OutlinedTextField(
                         value = goalStudyHours,
                         onValueChange = onGoalStudyHoursChange,
-                        label = { Text(text = "Goal Study Hours")},
+                        label = { Text(text = "Goal Study Hours") },
                         singleLine = true,
                         isError = goalStudyHoursError != null && goalStudyHours.isNotBlank(),
-                        supportingText = { Text(text = goalStudyHoursError.orEmpty())},
+                        supportingText = { Text(text = goalStudyHoursError.orEmpty()) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }

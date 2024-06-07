@@ -30,6 +30,7 @@ fun TaskCheckBox(
             .clickable{ onCheckBoxClick() },
         contentAlignment = Alignment.Center
     ){
+        //crosses out the task when its complete
         AnimatedVisibility(visible = isComplete){
             Icon(
                 modifier = Modifier.size(20.dp),

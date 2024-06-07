@@ -35,6 +35,7 @@ fun LazyListScope.tasksList(
         )
     }
 
+    //if the taskList is empty show an stock image
     if(tasks.isEmpty()){
         item{
             Column(
@@ -66,7 +67,7 @@ fun LazyListScope.tasksList(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             task = task,
             onCheckBoxClick = { onCheckBoxClick(task) },
-            onClick = {onTaskCardClick(task.taskId)}
+            onClick = { onTaskCardClick(task.taskId) }
         )
     }
 }
