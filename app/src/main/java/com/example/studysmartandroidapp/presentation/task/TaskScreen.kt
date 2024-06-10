@@ -29,10 +29,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,18 +43,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
+import com.example.studysmartandroidapp.presentation.components.ProjectDatePicker
+import com.example.studysmartandroidapp.presentation.components.SubjectListBottomSheet
 import com.example.studysmartandroidapp.presentation.components.TaskCheckBox
 import com.example.studysmartandroidapp.presentation.domain.model.Task
 import com.example.studysmartandroidapp.presentation.theme.Red
 import com.example.studysmartandroidapp.presentation.utils.Priority
+import com.example.studysmartandroidapp.presentation.utils.changeMillisToDateString
+import com.example.studysmartandroidapp.subjects
+import kotlinx.coroutines.launch
+import java.time.Instant
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskScreen(
     task: Task
 ){
 
+    var relatedSubject by remember { mutableStateOf("") }
     var title by remember{ mutableStateOf("") }
     var description by remember{ mutableStateOf("") }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = Instant.now().toEpochMilli()
+    )
+    var isDatePickerDialogueOpen by remember{ mutableStateOf(false) }
+
+    val sheetState = rememberModalBottomSheetState()
+    var isBottomSheetOpen by remember{ mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     var isDeleteTaskDialogueOpen by remember{ mutableStateOf(false) }
 
@@ -70,6 +90,27 @@ fun TaskScreen(
         bodyText = "Are you sure you want to delete this task?\nTHIS ACTION CANNOT BE UNDONE.",
         onDismissRequest = { isDeleteTaskDialogueOpen = false },
         onConfirmButtonClick = { isDeleteTaskDialogueOpen = false }
+    )
+
+    ProjectDatePicker(
+        state = datePickerState,
+        isOpen = isDatePickerDialogueOpen,
+        onDismissRequest = { isDatePickerDialogueOpen = false },
+        onConfirmButtonClick = { isDatePickerDialogueOpen = false  }
+    )
+
+    SubjectListBottomSheet(
+        sheetState = sheetState,
+        isOpen = isBottomSheetOpen,
+        subjects = subjects,
+        //how to dismiss a bottom sheet if not through the onDismissRequest
+        onSubjectClick = {
+            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                if(!sheetState.isVisible) isBottomSheetOpen = false
+            }
+            relatedSubject = it.subjectName
+        },
+        onDismissRequest = { isBottomSheetOpen = false}
     )
 
     Scaffold (
@@ -123,11 +164,11 @@ fun TaskScreen(
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
-                    text = "07 June 2024",
+                    text = datePickerState.selectedDateMillis.changeMillisToDateString(),
                     style = MaterialTheme.typography.bodyLarge
                 )
 
-                IconButton(onClick = { /*TODO*/ } ) {
+                IconButton(onClick = { isDatePickerDialogueOpen = true } ) {
                     Icon(
                         imageVector = Icons.Default.DateRange,
                         contentDescription = "Select Due Date"
@@ -174,11 +215,11 @@ fun TaskScreen(
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
-                    text = "English",
+                    text = relatedSubject,
                     style = MaterialTheme.typography.bodyLarge
                 )
 
-                IconButton(onClick = { /*TODO*/ } ) {
+                IconButton(onClick = { isBottomSheetOpen = true } ) {
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "Select related subject"
