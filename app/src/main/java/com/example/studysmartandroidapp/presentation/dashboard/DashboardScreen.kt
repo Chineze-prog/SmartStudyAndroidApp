@@ -122,7 +122,8 @@ private fun DashboardScreen(navController: NavController){
                     modifier = Modifier.fillMaxWidth(),
                     //subjectsList = emptyList()
                     subjectsList = subjects,
-                    onAddIconClick = {isAddSubjectDialogueOpen = true}
+                    onAddIconClick = { isAddSubjectDialogueOpen = true },
+                    onSubjectCardClick = { /*TODO*/}
                 )
             }
 
@@ -211,7 +212,8 @@ private fun SubjectCardsSection(
     subjectsList: List<Subject>,
     emptyListText: String = "You currently don't have any subjects.\n Click the + button to add " +
             "a new subject",
-    onAddIconClick: () -> Unit
+    onAddIconClick: () -> Unit,
+    onSubjectCardClick: ()-> Unit
 ){
     Column (modifier = modifier){
         Row (
@@ -259,7 +261,7 @@ private fun SubjectCardsSection(
                 SubjectCard(
                     subjectName = subject.subjectName,
                     gradientColors = subject.colors,
-                    onClick = { /*TODO*/ }
+                    onClick = onSubjectCardClick
                 )
             }
         }
