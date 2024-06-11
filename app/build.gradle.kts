@@ -2,7 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id( "kotlin-kapt")
+    id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
 }
@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    //implementation(libs.androidx.navigation.safe.args.generator)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,6 +72,19 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    //destination compose - navigation
+    //val destinationVersion = "2.7.7"
+    implementation(libs.androidx.navigation.compose)
+    //implementation (libs.core)
+    //noinspection UseTomlInstead
+    //ksp("io.github.raamcosta.compose-destinations:$destinationVersion")
+
+    //Room
+    //val roomVersion = "2.6.1"
+    //implementation(libs.androidx.room.runtime)//{rootProject.extra["room_version"]}")
+   // ksp(libs.androidx.room.compiler)//${rootProject.extra["room_version"]}")
+   // implementation(libs.androidx.room.ktx)//${rootProject.extra["room_version"]}")
+
     //Dagger-Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)

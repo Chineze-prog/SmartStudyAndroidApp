@@ -29,3 +29,7 @@ fun Long?.changeMillisToDateString(): String{
 
     return date.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
 }
+
+fun Long.toLocalDate(): LocalDate{
+    return Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
+}

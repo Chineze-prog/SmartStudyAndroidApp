@@ -41,18 +41,30 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.studysmartandroidapp.presentation.components.AddSubjectDialogue
 import com.example.studysmartandroidapp.presentation.components.CountCard
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.presentation.components.tasksList
 import com.example.studysmartandroidapp.presentation.domain.model.Subject
+import com.example.studysmartandroidapp.presentation.task.navigateToTask
 import com.example.studysmartandroidapp.sessions
 import com.example.studysmartandroidapp.tasks
 
+data class SubjectScreenNavArgs(
+    val subjectId: Int
+)
+
+@Composable
+fun SubjectScreenRoute(navController: NavController, subject: Subject){
+    SubjectScreen(navController, subject)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubjectScreen(
+private fun SubjectScreen(
+    navController: NavController,
     subject: Subject
 ){
     //remembers the state of the lazy list
@@ -116,7 +128,7 @@ fun SubjectScreen(
         topBar = {
             SubjectScreenTopBar(
                 subjectName = subjectName,
-                onBackButtonClick = { /*TODO*/ },
+                onBackButtonClick = { navController.navigate("dashboard") },
                 onDeleteButtonClick = { isDeleteSubjectDialogueOpen = true },
                 onEditButtonClick = { isEditSubjectDialogueOpen = true },
                 scrollBehavior = scrollBehavior
@@ -124,7 +136,9 @@ fun SubjectScreen(
         },
         floatingActionButton = { 
             ExtendedFloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    navController.navigateToTask(taskId = null, subjectId = subject.subjectId)
+                },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -159,7 +173,9 @@ fun SubjectScreen(
                 tasks = tasks,
                 emptyListText = "You don't have any upcoming tasks.\n Click the + button in the" +
                         " subject screen to add a new task.",
-                onTaskCardClick = { /*TODO*/ },
+                onTaskCardClick = {
+                    navController.navigateToTask(taskId = it, subjectId = subject.subjectId)
+                },
                 onCheckBoxClick = { /*TODO*/ }
             )
 
@@ -173,7 +189,9 @@ fun SubjectScreen(
                 tasks = tasks,
                 emptyListText = "You don't have any completed tasks.\n Click the task's check box" +
                         " upon completion.",
-                onTaskCardClick = { /*TODO*/ },
+                onTaskCardClick = {
+                    navController.navigateToTask(taskId = it, subjectId = subject.subjectId)
+                },
                 onCheckBoxClick = { /*TODO*/ }
             )
 

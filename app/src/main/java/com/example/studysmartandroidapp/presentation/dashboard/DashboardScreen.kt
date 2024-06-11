@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.studysmartandroidapp.R
 import com.example.studysmartandroidapp.presentation.components.AddSubjectDialogue
 import com.example.studysmartandroidapp.presentation.components.CountCard
@@ -45,12 +46,18 @@ import com.example.studysmartandroidapp.presentation.components.SubjectCard
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.presentation.components.tasksList
 import com.example.studysmartandroidapp.presentation.domain.model.Subject
+import com.example.studysmartandroidapp.presentation.task.navigateToTask
 import com.example.studysmartandroidapp.sessions
 import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.tasks
 
 @Composable
-fun DashboardScreen(){
+fun DashboardScreenRoute(navController: NavController){
+    DashboardScreen(navController)
+}
+
+@Composable
+private fun DashboardScreen(navController: NavController){
 
     var isAddSubjectDialogueOpen by remember{ mutableStateOf(false) }
 
@@ -124,7 +131,8 @@ fun DashboardScreen(){
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 48.dp, vertical = 20.dp),
-                    onClick = { /*TODO*/ }) {
+                    onClick = { navController.navigate("session") }
+                ) {
                         Text(text = "Start Study Session")
                 }
             }
@@ -135,7 +143,7 @@ fun DashboardScreen(){
                 tasks = tasks,
                 emptyListText = "You don't have any upcoming tasks.\n Click the + button in the" +
                         " subject screen to add a new task.",
-                onTaskCardClick = { /*TODO*/ },
+                onTaskCardClick = { navController.navigateToTask(taskId = it, subjectId = null) },
                 onCheckBoxClick = { /*TODO*/ }
             )
 

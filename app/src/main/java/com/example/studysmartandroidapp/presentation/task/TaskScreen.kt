@@ -42,30 +42,61 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.ProjectDatePicker
 import com.example.studysmartandroidapp.presentation.components.SubjectListBottomSheet
 import com.example.studysmartandroidapp.presentation.components.TaskCheckBox
+import com.example.studysmartandroidapp.presentation.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.domain.model.Task
 import com.example.studysmartandroidapp.presentation.theme.Red
 import com.example.studysmartandroidapp.presentation.utils.Priority
 import com.example.studysmartandroidapp.presentation.utils.changeMillisToDateString
+import com.example.studysmartandroidapp.presentation.utils.toLocalDate
 import com.example.studysmartandroidapp.subjects
+import com.example.studysmartandroidapp.tasks
 import kotlinx.coroutines.launch
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+
+data class TaskScreenNavArgs(
+    val taskId: Int?,
+    val subjectId :Int?
+)
+
+@Composable
+fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?){
+    val task: Task? = tasks.find{ it.taskId == taskId }
+    val relatedSubject: Subject? = subjects.find{ it.subjectId == subjectId }
+
+    TaskScreen(
+        navController = navController,
+        relatedSubject = relatedSubject,
+        task = task
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskScreen(
-    task: Task
+private fun TaskScreen(
+    navController: NavController,
+    relatedSubject: Subject?,
+    task: Task?
 ){
 
-    var relatedSubject by remember { mutableStateOf("") }
-    var title by remember{ mutableStateOf("") }
-    var description by remember{ mutableStateOf("") }
+    var relatedSubject by remember { mutableStateOf(relatedSubject?.subjectName ?: "") }
+    var title by remember{ mutableStateOf(task?.title ?: "") }
+    var description by remember{ mutableStateOf(task?.description ?: "") }
 
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = Instant.now().toEpochMilli()
+        initialSelectedDateMillis =
+        if (task == null){ Instant.now().toEpochMilli() }
+        else if(task.dueDate == null || task.dueDate.toLocalDate()
+                    <  LocalDate.now(ZoneOffset.UTC)){
+                Instant.now().toEpochMilli() }
+            else{ task.dueDate }
+
     )
     var isDatePickerDialogueOpen by remember{ mutableStateOf(false) }
 
@@ -120,7 +151,14 @@ fun TaskScreen(
                 isComplete = false,//task.isComplete,
                 taskName = "Task",//task.title,
                 checkBoxBorderColor = Red,
-                onBackButtonClick = { /*TODO*/ },
+                onBackButtonClick = {
+                    if(relatedSubject == null && task != null){
+                        navController.navigate("subject")
+                    }
+                    else{
+                        navController.navigate("dashboard")
+                    }
+                },
                 onDeleteButtonClick = { isDeleteTaskDialogueOpen = true },
                 onCheckBoxClick = { /*TODO*/ }
             )

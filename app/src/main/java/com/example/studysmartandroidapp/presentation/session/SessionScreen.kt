@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.SubjectListBottomSheet
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
@@ -42,9 +43,14 @@ import com.example.studysmartandroidapp.subjects
 import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun SessionScreen(
+fun SessionScreenRoute(navController: NavController){
+    SessionScreen(navController)
+}
 
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun SessionScreen(
+    navController: NavController
 ){
     var relatedSubject by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState()
@@ -77,7 +83,7 @@ fun SessionScreen(
 
     Scaffold (
         topBar = {
-            SessionScreenTopBar( onBackButtonClick = { /*TODO*/ } )
+            SessionScreenTopBar( onBackButtonClick = { navController.navigate("dashboard") } )
         }
     ){ paddingValue ->
         LazyColumn(
