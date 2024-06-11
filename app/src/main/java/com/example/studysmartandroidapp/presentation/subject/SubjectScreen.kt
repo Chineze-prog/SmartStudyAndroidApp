@@ -267,7 +267,7 @@ private fun SubjectOverviewSection(
 
         CountCard(
             modifier = Modifier.weight(1f),
-            headingText = "Goal Study Hours",
+            headingText = "Studied Hours",
             count = studiedHours
         )
 

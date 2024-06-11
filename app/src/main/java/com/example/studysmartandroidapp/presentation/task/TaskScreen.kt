@@ -226,6 +226,7 @@ fun TaskScreen(
                     )
                 }
             }
+
             Button(
                 enabled = taskTitleError == null,
                 onClick = { /*TODO*/ },
@@ -252,7 +253,7 @@ private fun TaskScreenTopBar(
 ){
     TopAppBar(
         navigationIcon = {
-            IconButton(onClick = { onBackButtonClick }) {
+            IconButton(onClick = onBackButtonClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Navigate Back to Subject")

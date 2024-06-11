@@ -72,6 +72,16 @@ fun SubjectListBottomSheet(
                     ) {
                         Text(text = subject.subjectName)
                     }
+
+                }
+
+                //for space at the bottom of the list
+                item{
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(15.dp)
+                    )
                 }
             }
         }

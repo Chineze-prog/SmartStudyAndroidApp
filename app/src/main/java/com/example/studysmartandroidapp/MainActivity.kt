@@ -7,6 +7,7 @@ import com.example.studysmartandroidapp.presentation.dashboard.DashboardScreen
 import com.example.studysmartandroidapp.presentation.domain.model.Session
 import com.example.studysmartandroidapp.presentation.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.domain.model.Task
+import com.example.studysmartandroidapp.presentation.session.SessionScreen
 import com.example.studysmartandroidapp.presentation.subject.SubjectScreen
 import com.example.studysmartandroidapp.presentation.task.TaskScreen
 import com.example.studysmartandroidapp.presentation.theme.StudySmartAndroidAppTheme
@@ -18,7 +19,8 @@ class MainActivity : ComponentActivity() {
             StudySmartAndroidAppTheme {
                 //DashboardScreen()
                 //SubjectScreen(subjects[0])
-                TaskScreen(tasks[0])
+                //TaskScreen(tasks[0])
+                SessionScreen()
             }
         }
     }
