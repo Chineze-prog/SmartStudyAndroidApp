@@ -53,23 +53,19 @@ import com.example.studysmartandroidapp.sessions
 import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.tasks
 
-data class SubjectScreenNavArgs(
-    val subjectId: Int
-)
-
 @Composable
 fun SubjectScreenRoute(navController: NavController, subjectId: Int){
     val subject: Subject? = subjects.find{ it.subjectId == subjectId }
     if (subject != null) {
         SubjectScreen(
-            navController = navController,
             subject = subject,
             onTaskCardClick = {
                 navController.navigateToTask(taskId = it, subjectId = subject.subjectId)
             },
             onAddTaskClick = {
                 navController.navigateToTask(taskId = null, subjectId = subject.subjectId)
-            }
+            },
+            onBackButtonClick = { navController.navigate("dashboard") }
         )
     }
 }
@@ -77,10 +73,10 @@ fun SubjectScreenRoute(navController: NavController, subjectId: Int){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SubjectScreen(
-    navController: NavController,
     subject: Subject,
     onTaskCardClick: (Int?) -> Unit,
-    onAddTaskClick: () -> Unit
+    onAddTaskClick: () -> Unit,
+    onBackButtonClick: () -> Unit
 ){
     //remembers the state of the lazy list
     val listState = rememberLazyListState()
@@ -143,7 +139,7 @@ private fun SubjectScreen(
         topBar = {
             SubjectScreenTopBar(
                 subjectName = subjectName,
-                onBackButtonClick = { navController.navigate("dashboard") },
+                onBackButtonClick = onBackButtonClick,
                 onDeleteButtonClick = { isDeleteSubjectDialogueOpen = true },
                 onEditButtonClick = { isEditSubjectDialogueOpen = true },
                 scrollBehavior = scrollBehavior

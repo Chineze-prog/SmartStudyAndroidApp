@@ -45,7 +45,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SessionScreenRoute(navController: NavController){
     SessionScreen(
-        navController = navController,
         onBackButtonClick = { navController.navigate("dashboard") }
     )
 }
@@ -53,7 +52,6 @@ fun SessionScreenRoute(navController: NavController){
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun SessionScreen(
-    navController: NavController,
     onBackButtonClick: () -> Unit
 ){
     var relatedSubject by remember { mutableStateOf("") }

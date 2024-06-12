@@ -57,14 +57,8 @@ import com.example.studysmartandroidapp.presentation.utils.toLocalDate
 import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.tasks
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-
-data class TaskScreenNavArgs(
-    val taskId: Int?,
-    val subjectId :Int?
-)
 
 @Composable
 fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?){
@@ -72,7 +66,6 @@ fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?)
     val relatedSubject: Subject? = subjects.find{ it.subjectId == subjectId }
 
     TaskScreen(
-        navController = navController,
         subject = relatedSubject,
         task = task,
         backToDashboard = { navController.navigate("dashboard") },
@@ -83,7 +76,6 @@ fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TaskScreen(
-    navController: NavController,
     subject: Subject?,
     task: Task?,
     backToDashboard: () -> Unit,

@@ -5,7 +5,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.studysmartandroidapp.tasks
 
 private const val taskScreenRoute = "task?subjectId={subjectId}&taskId={taskId}"
 

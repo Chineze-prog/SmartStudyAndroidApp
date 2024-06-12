@@ -55,7 +55,6 @@ import com.example.studysmartandroidapp.tasks
 @Composable
 fun DashboardScreenRoute(navController: NavController){
     DashboardScreen(
-        navController = navController,
         onStartSessionButtonClick = { navController.navigate("session") },
         onSubjectCardClick = {
             if (it != null) {
@@ -68,7 +67,6 @@ fun DashboardScreenRoute(navController: NavController){
 
 @Composable
 private fun DashboardScreen(
-    navController: NavController,
     onStartSessionButtonClick: () -> Unit,
     onSubjectCardClick: (Int?) -> Unit,
     onTaskCardClick: (Int?) -> Unit
