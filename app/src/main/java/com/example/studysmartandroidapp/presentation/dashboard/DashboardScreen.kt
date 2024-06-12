@@ -46,6 +46,7 @@ import com.example.studysmartandroidapp.presentation.components.SubjectCard
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.presentation.components.tasksList
 import com.example.studysmartandroidapp.presentation.domain.model.Subject
+import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
 import com.example.studysmartandroidapp.presentation.task.navigateToTask
 import com.example.studysmartandroidapp.sessions
 import com.example.studysmartandroidapp.subjects
@@ -53,11 +54,25 @@ import com.example.studysmartandroidapp.tasks
 
 @Composable
 fun DashboardScreenRoute(navController: NavController){
-    DashboardScreen(navController)
+    DashboardScreen(
+        navController = navController,
+        onStartSessionButtonClick = { navController.navigate("session") },
+        onSubjectCardClick = {
+            if (it != null) {
+                navController.navigateToSubject(it)
+            }
+        },
+        onTaskCardClick = { navController.navigateToTask(taskId = it, subjectId = null) }
+        )
 }
 
 @Composable
-private fun DashboardScreen(navController: NavController){
+private fun DashboardScreen(
+    navController: NavController,
+    onStartSessionButtonClick: () -> Unit,
+    onSubjectCardClick: (Int?) -> Unit,
+    onTaskCardClick: (Int?) -> Unit
+){
 
     var isAddSubjectDialogueOpen by remember{ mutableStateOf(false) }
 
@@ -123,7 +138,7 @@ private fun DashboardScreen(navController: NavController){
                     //subjectsList = emptyList()
                     subjectsList = subjects,
                     onAddIconClick = { isAddSubjectDialogueOpen = true },
-                    onSubjectCardClick = { /*TODO*/}
+                    onSubjectCardClick = onSubjectCardClick
                 )
             }
 
@@ -132,7 +147,7 @@ private fun DashboardScreen(navController: NavController){
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 48.dp, vertical = 20.dp),
-                    onClick = { navController.navigate("session") }
+                    onClick = onStartSessionButtonClick
                 ) {
                         Text(text = "Start Study Session")
                 }
@@ -144,7 +159,7 @@ private fun DashboardScreen(navController: NavController){
                 tasks = tasks,
                 emptyListText = "You don't have any upcoming tasks.\n Click the + button in the" +
                         " subject screen to add a new task.",
-                onTaskCardClick = { navController.navigateToTask(taskId = it, subjectId = null) },
+                onTaskCardClick = onTaskCardClick,
                 onCheckBoxClick = { /*TODO*/ }
             )
 
@@ -213,7 +228,7 @@ private fun SubjectCardsSection(
     emptyListText: String = "You currently don't have any subjects.\n Click the + button to add " +
             "a new subject",
     onAddIconClick: () -> Unit,
-    onSubjectCardClick: ()-> Unit
+    onSubjectCardClick: (Int?) -> Unit
 ){
     Column (modifier = modifier){
         Row (
@@ -261,7 +276,7 @@ private fun SubjectCardsSection(
                 SubjectCard(
                     subjectName = subject.subjectName,
                     gradientColors = subject.colors,
-                    onClick = onSubjectCardClick
+                    onClick = { onSubjectCardClick(subject.subjectId) }
                 )
             }
         }

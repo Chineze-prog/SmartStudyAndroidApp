@@ -44,13 +44,17 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SessionScreenRoute(navController: NavController){
-    SessionScreen(navController)
+    SessionScreen(
+        navController = navController,
+        onBackButtonClick = { navController.navigate("dashboard") }
+    )
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun SessionScreen(
-    navController: NavController
+    navController: NavController,
+    onBackButtonClick: () -> Unit
 ){
     var relatedSubject by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState()
@@ -83,7 +87,7 @@ private fun SessionScreen(
 
     Scaffold (
         topBar = {
-            SessionScreenTopBar( onBackButtonClick = { navController.navigate("dashboard") } )
+            SessionScreenTopBar( onBackButtonClick = onBackButtonClick )
         }
     ){ paddingValue ->
         LazyColumn(

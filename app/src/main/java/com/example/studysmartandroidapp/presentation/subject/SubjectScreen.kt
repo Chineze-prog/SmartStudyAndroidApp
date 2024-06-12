@@ -50,6 +50,7 @@ import com.example.studysmartandroidapp.presentation.components.tasksList
 import com.example.studysmartandroidapp.presentation.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.task.navigateToTask
 import com.example.studysmartandroidapp.sessions
+import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.tasks
 
 data class SubjectScreenNavArgs(
@@ -57,15 +58,29 @@ data class SubjectScreenNavArgs(
 )
 
 @Composable
-fun SubjectScreenRoute(navController: NavController, subject: Subject){
-    SubjectScreen(navController, subject)
+fun SubjectScreenRoute(navController: NavController, subjectId: Int){
+    val subject: Subject? = subjects.find{ it.subjectId == subjectId }
+    if (subject != null) {
+        SubjectScreen(
+            navController = navController,
+            subject = subject,
+            onTaskCardClick = {
+                navController.navigateToTask(taskId = it, subjectId = subject.subjectId)
+            },
+            onAddTaskClick = {
+                navController.navigateToTask(taskId = null, subjectId = subject.subjectId)
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SubjectScreen(
     navController: NavController,
-    subject: Subject
+    subject: Subject,
+    onTaskCardClick: (Int?) -> Unit,
+    onAddTaskClick: () -> Unit
 ){
     //remembers the state of the lazy list
     val listState = rememberLazyListState()
@@ -81,9 +96,9 @@ private fun SubjectScreen(
 
     var isDeleteSessionDialogueOpen by remember{ mutableStateOf(false) }
 
-    var subjectName by remember{ mutableStateOf(subject.subjectName) }//("") }
+    var subjectName by remember{ mutableStateOf(subject.subjectName) }
 
-    var goalStudyHours by remember{ mutableStateOf(subject.goalStudyHours) }//("") }
+    var goalStudyHours by remember{ mutableStateOf(subject.goalStudyHours) }
 
     var selectedColor by rememberSaveable { mutableStateOf(subject.colors) }
     //(Subject.subjectCardColors.random()) }
@@ -136,9 +151,7 @@ private fun SubjectScreen(
         },
         floatingActionButton = { 
             ExtendedFloatingActionButton(
-                onClick = {
-                    navController.navigateToTask(taskId = null, subjectId = subject.subjectId)
-                },
+                onClick = onAddTaskClick,
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -173,9 +186,7 @@ private fun SubjectScreen(
                 tasks = tasks,
                 emptyListText = "You don't have any upcoming tasks.\n Click the + button in the" +
                         " subject screen to add a new task.",
-                onTaskCardClick = {
-                    navController.navigateToTask(taskId = it, subjectId = subject.subjectId)
-                },
+                onTaskCardClick = onTaskCardClick,
                 onCheckBoxClick = { /*TODO*/ }
             )
 
@@ -189,9 +200,7 @@ private fun SubjectScreen(
                 tasks = tasks,
                 emptyListText = "You don't have any completed tasks.\n Click the task's check box" +
                         " upon completion.",
-                onTaskCardClick = {
-                    navController.navigateToTask(taskId = it, subjectId = subject.subjectId)
-                },
+                onTaskCardClick = onTaskCardClick,
                 onCheckBoxClick = { /*TODO*/ }
             )
 

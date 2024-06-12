@@ -8,6 +8,8 @@ import com.example.studysmartandroidapp.presentation.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.domain.model.Task
 import com.example.studysmartandroidapp.presentation.navigation.StudySmartNavGraph
 import com.example.studysmartandroidapp.presentation.theme.StudySmartAndroidAppTheme
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,11 +23,11 @@ class MainActivity : ComponentActivity() {
 }
 
 val subjects = listOf(
-    Subject(subjectId = 0, subjectName = "English", goalStudyHours = 10f, colors = Subject.subjectCardColors[0]),
-    Subject(subjectId = 0, subjectName = "Physics", goalStudyHours = 10f, colors = Subject.subjectCardColors[1]),
-    Subject(subjectId = 0, subjectName = "Maths", goalStudyHours = 10f, colors = Subject.subjectCardColors[2]),
-    Subject(subjectId = 0, subjectName = "Geology", goalStudyHours = 10f, colors = Subject.subjectCardColors[3]),
-    Subject(subjectId = 0, subjectName = "Fine Arts", goalStudyHours = 10f, colors = Subject.subjectCardColors[4])
+    Subject(subjectId = 1, subjectName = "English", goalStudyHours = 10f, colors = Subject.subjectCardColors[0]),
+    Subject(subjectId = 2, subjectName = "Physics", goalStudyHours = 10f, colors = Subject.subjectCardColors[1]),
+    Subject(subjectId = 3, subjectName = "Maths", goalStudyHours = 10f, colors = Subject.subjectCardColors[2]),
+    Subject(subjectId = 4, subjectName = "Geology", goalStudyHours = 10f, colors = Subject.subjectCardColors[3]),
+    Subject(subjectId = 5, subjectName = "Computer Science", goalStudyHours = 10f, colors = Subject.subjectCardColors[4])
 )
 
 val tasks = listOf(
@@ -34,23 +36,25 @@ val tasks = listOf(
         taskSubjectId = 0,
         title = "Prepare notes",
         description = "",
-        dueDate = 0L,
+        dueDate = (LocalDate.of(2024, 7, 30))
+            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
         priority = 0,
         relatedSubject = "",
         isComplete = false
     ),
     Task(
-        taskId = 1,
+        taskId = 2,
         taskSubjectId = 0,
         title = "Do Homework",
         description = "",
-        dueDate = 0L,
+        dueDate = (LocalDate.of(2024, 11, 25))
+            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
         priority = 1,
         relatedSubject = "",
         isComplete = true
     ),
     Task(
-        taskId = 1,
+        taskId = 3,
         taskSubjectId = 0,
         title = "Go Cooking",
         description = "",
@@ -60,21 +64,23 @@ val tasks = listOf(
         isComplete = false
     ),
     Task(
-        taskId = 1,
+        taskId = 4,
         taskSubjectId = 0,
         title = "Assignment",
         description = "",
-        dueDate = 0L,
+        dueDate = (LocalDate.of(2024, 11, 25))
+            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
         priority = 1,
         relatedSubject = "",
         isComplete = false
     ),
     Task(
-        taskId = 1,
+        taskId = 5,
         taskSubjectId = 0,
         title = "Write Poem",
         description = "",
-        dueDate = 0L,
+        dueDate = (LocalDate.of(2024, 7, 30))
+            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
         priority = 0,
         relatedSubject = "",
         isComplete = true
@@ -83,45 +89,49 @@ val tasks = listOf(
 
 val sessions = listOf(
     Session(
-        sessionId = 0,
-        sessionSubjectId = 0,
+        sessionId = 1,
+        sessionSubjectId = 1,
         relatedSubject = "English",
         date = 0L,
         duration = 2
     ),
     Session(
-        sessionId = 0,
-        sessionSubjectId = 0,
+        sessionId = 2,
+        sessionSubjectId = 3,
+        relatedSubject = "Maths",
+        date = (LocalDate.of(2024, 11, 25))
+            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+        duration = 2
+    ),
+    Session(
+        sessionId = 3,
+        sessionSubjectId = 2,
+        relatedSubject = "Physics",
+        date = (LocalDate.of(2024, 7, 30))
+            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+        duration = 2
+    ),
+    Session(
+        sessionId = 4,
+        sessionSubjectId = 4,
         relatedSubject = "Maths",
         date = 0L,
         duration = 2
     ),
     Session(
-        sessionId = 0,
-        sessionSubjectId = 0,
-        relatedSubject = "Physics",
-        date = 0L,
-        duration = 2
-    ),
-    Session(
-        sessionId = 0,
-        sessionSubjectId = 0,
-        relatedSubject = "Psychology",
-        date = 0L,
-        duration = 2
-    ),
-    Session(
-        sessionId = 0,
-        sessionSubjectId = 0,
+        sessionId = 5,
+        sessionSubjectId = 5,
         relatedSubject = "Computer Science",
-        date = 0L,
+        date = (LocalDate.of(2024, 8, 19))
+            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
         duration = 2
     ),
     Session(
-        sessionId = 0,
-        sessionSubjectId = 0,
-        relatedSubject = "Biology",
-        date = 0L,
+        sessionId = 6,
+        sessionSubjectId = 4,
+        relatedSubject = "Geology",
+        date = (LocalDate.of(2024, 9, 20))
+            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
         duration = 2
     )
 )

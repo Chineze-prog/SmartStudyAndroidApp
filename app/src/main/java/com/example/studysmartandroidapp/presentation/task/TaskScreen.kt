@@ -49,6 +49,7 @@ import com.example.studysmartandroidapp.presentation.components.SubjectListBotto
 import com.example.studysmartandroidapp.presentation.components.TaskCheckBox
 import com.example.studysmartandroidapp.presentation.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.domain.model.Task
+import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
 import com.example.studysmartandroidapp.presentation.theme.Red
 import com.example.studysmartandroidapp.presentation.utils.Priority
 import com.example.studysmartandroidapp.presentation.utils.changeMillisToDateString
@@ -72,8 +73,10 @@ fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?)
 
     TaskScreen(
         navController = navController,
-        relatedSubject = relatedSubject,
-        task = task
+        subject = relatedSubject,
+        task = task,
+        backToDashboard = { navController.navigate("dashboard") },
+        backToSubject = { relatedSubject?.subjectId?.let { navController.navigateToSubject(it) } }
     )
 }
 
@@ -81,23 +84,24 @@ fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?)
 @Composable
 private fun TaskScreen(
     navController: NavController,
-    relatedSubject: Subject?,
-    task: Task?
+    subject: Subject?,
+    task: Task?,
+    backToDashboard: () -> Unit,
+    backToSubject: () -> Unit
 ){
 
-    var relatedSubject by remember { mutableStateOf(relatedSubject?.subjectName ?: "") }
-    var title by remember{ mutableStateOf(task?.title ?: "") }
-    var description by remember{ mutableStateOf(task?.description ?: "") }
+    var relatedSubject by remember { mutableStateOf(subject?.subjectName ?: "") }
+    var title by remember { mutableStateOf(task?.title ?: "") }
+    var description by remember { mutableStateOf(task?.description ?: "") }
 
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis =
-        if (task == null){ Instant.now().toEpochMilli() }
-        else if(task.dueDate == null || task.dueDate.toLocalDate()
-                    <  LocalDate.now(ZoneOffset.UTC)){
-                Instant.now().toEpochMilli() }
-            else{ task.dueDate }
-
+        initialSelectedDateMillis = //LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+        if(task == null || task.dueDate.toLocalDate() <  LocalDate.now(ZoneOffset.UTC)){
+            LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+        }
+        else{ task.dueDate }
     )
+
     var isDatePickerDialogueOpen by remember{ mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState()
@@ -148,17 +152,16 @@ private fun TaskScreen(
         topBar = {
             TaskScreenTopBar(
                 taskExists = true,
-                isComplete = false,//task.isComplete,
-                taskName = "Task",//task.title,
+                isComplete = task?.isComplete ?: false,
+                taskName = task?.title ?: "",
                 checkBoxBorderColor = Red,
-                onBackButtonClick = {
-                    if(relatedSubject == null && task != null){
-                        navController.navigate("subject")
+                onBackButtonClick =
+                    if(subject != null && task != null){
+                        backToSubject
                     }
                     else{
-                        navController.navigate("dashboard")
-                    }
-                },
+                        backToDashboard
+                    },
                 onDeleteButtonClick = { isDeleteTaskDialogueOpen = true },
                 onCheckBoxClick = { /*TODO*/ }
             )
@@ -267,7 +270,13 @@ private fun TaskScreen(
 
             Button(
                 enabled = taskTitleError == null,
-                onClick = { /*TODO*/ },
+                onClick =
+                if(subject != null && task != null){
+                    backToSubject
+                }
+                else{
+                    backToDashboard
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
