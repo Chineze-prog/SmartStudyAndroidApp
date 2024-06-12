@@ -263,7 +263,7 @@ private fun TaskScreen(
             Button(
                 enabled = taskTitleError == null,
                 onClick =
-                if(subject != null && task != null){
+                if(subject != null){
                     backToSubject
                 }
                 else{
