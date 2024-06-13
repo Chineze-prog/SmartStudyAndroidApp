@@ -56,9 +56,9 @@ import com.example.studysmartandroidapp.tasks
 fun DashboardScreenRoute(navController: NavController){
     DashboardScreen(
         onStartSessionButtonClick = { navController.navigate("session") },
-        onSubjectCardClick = {
-            if (it != null) {
-                navController.navigateToSubject(it)
+        onSubjectCardClick = {subjectId ->
+            if (subjectId != null) {
+                navController.navigateToSubject(subjectId)
             }
         },
         onTaskCardClick = { navController.navigateToTask(taskId = it, subjectId = null) }

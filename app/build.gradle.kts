@@ -80,10 +80,12 @@ dependencies {
     //ksp("io.github.raamcosta.compose-destinations:$destinationVersion")
 
     //Room
+    implementation (libs.androidx.room.ktx)
+    implementation (libs.androidx.room.common)
     //val roomVersion = "2.6.1"
     //implementation(libs.androidx.room.runtime)//{rootProject.extra["room_version"]}")
-   // ksp(libs.androidx.room.compiler)//${rootProject.extra["room_version"]}")
-   // implementation(libs.androidx.room.ktx)//${rootProject.extra["room_version"]}")
+    //ksp(libs.androidx.room.compiler)//${rootProject.extra["room_version"]}")
+    //implementation(libs.androidx.room.ktx)//${rootProject.extra["room_version"]}")
 
     //Dagger-Hilt
     implementation(libs.hilt.android)

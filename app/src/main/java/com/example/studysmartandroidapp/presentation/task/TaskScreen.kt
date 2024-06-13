@@ -149,7 +149,7 @@ private fun TaskScreen(
                 taskName = task?.title ?: "",
                 checkBoxBorderColor = Red,
                 onBackButtonClick =
-                    if(subject != null && task != null){
+                    if(subject != null){
                         backToSubject
                     }
                     else{
