@@ -88,7 +88,8 @@ private fun TaskScreen(
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = //LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-        if(task == null || task.dueDate.toLocalDate() <  LocalDate.now(ZoneOffset.UTC)){
+        if(task == null || task.dueDate.toLocalDate()
+            <  LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli().toLocalDate()){
             LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
         }
         else{ task.dueDate }

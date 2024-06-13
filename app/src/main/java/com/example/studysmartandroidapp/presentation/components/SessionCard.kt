@@ -19,6 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.presentation.domain.model.Session
+import com.example.studysmartandroidapp.presentation.utils.changeMillisToDateString
+import com.example.studysmartandroidapp.presentation.utils.toLocalDate
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 @Composable
 fun StudySessionCard(
@@ -42,7 +46,14 @@ fun StudySessionCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${session.date}",
+                    text =
+                    if(session.date.toLocalDate() <
+                        LocalDate.now().atStartOfDay(ZoneOffset.UTC)
+                            .toInstant().toEpochMilli().toLocalDate()){
+                            LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+                                .changeMillisToDateString()
+                    }
+                    else{ session.date.changeMillisToDateString() },
                     style = MaterialTheme.typography.bodySmall
                 )
             }

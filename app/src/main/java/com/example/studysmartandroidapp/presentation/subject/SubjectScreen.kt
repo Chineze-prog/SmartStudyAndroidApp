@@ -94,7 +94,7 @@ private fun SubjectScreen(
 
     var subjectName by remember{ mutableStateOf(subject.subjectName) }
 
-    var goalStudyHours by remember{ mutableStateOf(subject.goalStudyHours) }
+    var goalStudyHours by remember{ mutableStateOf(subject.goalStudyHours.toString()) }
 
     var selectedColor by rememberSaveable { mutableStateOf(subject.colors) }
     //(Subject.subjectCardColors.random()) }
@@ -103,7 +103,7 @@ private fun SubjectScreen(
     AddSubjectDialogue(
         isOpen = isEditSubjectDialogueOpen,
         subjectName = subjectName,
-        goalStudyHours = goalStudyHours.toString(),
+        goalStudyHours = goalStudyHours,
         selectedColors = selectedColor,
         onDismissRequest = {
             isEditSubjectDialogueOpen = false
@@ -113,7 +113,7 @@ private fun SubjectScreen(
         },
         onColorChange = { newValue -> selectedColor = newValue },
         onSubjectNameChange = { newValue -> subjectName = newValue },
-        onGoalStudyHoursChange = { newValue -> goalStudyHours = newValue.toFloat() }
+        onGoalStudyHoursChange = { newValue -> goalStudyHours = newValue }
     )
 
     DeleteDialogue(

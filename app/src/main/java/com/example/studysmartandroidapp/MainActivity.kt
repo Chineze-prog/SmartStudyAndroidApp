@@ -37,7 +37,7 @@ val tasks = listOf(
         title = "Prepare notes",
         description = "",
         dueDate = (LocalDate.of(2024, 7, 30))
-            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
         priority = 0,
         relatedSubject = "",
         isComplete = false
@@ -48,7 +48,7 @@ val tasks = listOf(
         title = "Do Homework",
         description = "",
         dueDate = (LocalDate.of(2024, 11, 25))
-            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
         priority = 1,
         relatedSubject = "",
         isComplete = true
@@ -69,7 +69,7 @@ val tasks = listOf(
         title = "Assignment",
         description = "",
         dueDate = (LocalDate.of(2024, 11, 25))
-            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
         priority = 1,
         relatedSubject = "",
         isComplete = false
@@ -80,7 +80,7 @@ val tasks = listOf(
         title = "Write Poem",
         description = "",
         dueDate = (LocalDate.of(2024, 7, 30))
-            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
         priority = 0,
         relatedSubject = "",
         isComplete = true
@@ -100,7 +100,7 @@ val sessions = listOf(
         sessionSubjectId = 3,
         relatedSubject = "Maths",
         date = (LocalDate.of(2024, 11, 25))
-            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
         duration = 2
     ),
     Session(
@@ -108,7 +108,7 @@ val sessions = listOf(
         sessionSubjectId = 2,
         relatedSubject = "Physics",
         date = (LocalDate.of(2024, 7, 30))
-            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
         duration = 2
     ),
     Session(
@@ -123,7 +123,7 @@ val sessions = listOf(
         sessionSubjectId = 5,
         relatedSubject = "Computer Science",
         date = (LocalDate.of(2024, 8, 19))
-            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
         duration = 2
     ),
     Session(
@@ -131,7 +131,7 @@ val sessions = listOf(
         sessionSubjectId = 4,
         relatedSubject = "Geology",
         date = (LocalDate.of(2024, 9, 20))
-            .atStartOfDay(ZoneOffset.UTC).toEpochSecond(),
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
         duration = 2
     )
 )

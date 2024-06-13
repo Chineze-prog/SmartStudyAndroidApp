@@ -14,7 +14,8 @@ fun NavGraphBuilder.subjectScreen(navController: NavController){
         arguments = listOf(
             navArgument("subjectId"){
                 type = NavType.StringType
-                nullable = false
+                nullable = true
+                defaultValue = null
             }
         )){backStackEntry ->
         val subjectId = backStackEntry.arguments?.getString("subjectId")?.toIntOrNull() ?: run{
@@ -30,11 +31,5 @@ fun NavGraphBuilder.subjectScreen(navController: NavController){
 }
 
 fun NavController.navigateToSubject(subjectId: Int){
-    val route = buildString {
-        append("subject/")
-
-        append("subjectId=$subjectId")
-    }
-
-    this.navigate(route)
+    this.navigate("subject/subjectId=$subjectId")
 }

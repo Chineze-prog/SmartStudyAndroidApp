@@ -19,6 +19,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.presentation.domain.model.Task
 import com.example.studysmartandroidapp.presentation.utils.Priority
+import com.example.studysmartandroidapp.presentation.utils.changeMillisToDateString
+import com.example.studysmartandroidapp.presentation.utils.toLocalDate
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 @Composable
 fun TaskCard(
@@ -55,7 +59,14 @@ fun TaskCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${task.dueDate}",
+                    text =
+                    if(task.dueDate.toLocalDate() <
+                        LocalDate.now().atStartOfDay(ZoneOffset.UTC)
+                            .toInstant().toEpochMilli().toLocalDate()){
+                        LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+                            .changeMillisToDateString()
+                    }
+                    else{ task.dueDate.changeMillisToDateString() },
                     style = MaterialTheme.typography.bodySmall
                 )
             }
