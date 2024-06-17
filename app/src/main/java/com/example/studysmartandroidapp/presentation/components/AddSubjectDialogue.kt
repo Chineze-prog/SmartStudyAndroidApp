@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.studysmartandroidapp.presentation.domain.model.Subject
+import com.example.studysmartandroidapp.domain.model.Subject
 
 @Composable
 fun AddSubjectDialogue(

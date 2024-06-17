@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.studysmartandroidapp.presentation.domain.model.Subject
+import com.example.studysmartandroidapp.domain.model.Subject
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

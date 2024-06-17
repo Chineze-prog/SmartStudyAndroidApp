@@ -45,7 +45,7 @@ import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.SubjectCard
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.presentation.components.tasksList
-import com.example.studysmartandroidapp.presentation.domain.model.Subject
+import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
 import com.example.studysmartandroidapp.presentation.task.navigateToTask
 import com.example.studysmartandroidapp.sessions

@@ -3,9 +3,9 @@ package com.example.studysmartandroidapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.studysmartandroidapp.presentation.domain.model.Session
-import com.example.studysmartandroidapp.presentation.domain.model.Subject
-import com.example.studysmartandroidapp.presentation.domain.model.Task
+import com.example.studysmartandroidapp.domain.model.Session
+import com.example.studysmartandroidapp.domain.model.Subject
+import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.presentation.navigation.StudySmartNavGraph
 import com.example.studysmartandroidapp.presentation.theme.StudySmartAndroidAppTheme
 import java.time.LocalDate

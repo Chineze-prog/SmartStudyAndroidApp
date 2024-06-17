@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.studysmartandroidapp.presentation.domain.model.Task
-import com.example.studysmartandroidapp.presentation.utils.Priority
-import com.example.studysmartandroidapp.presentation.utils.changeMillisToDateString
-import com.example.studysmartandroidapp.presentation.utils.toLocalDate
+import com.example.studysmartandroidapp.domain.model.Task
+import com.example.studysmartandroidapp.utils.Priority
+import com.example.studysmartandroidapp.utils.changeMillisToDateString
+import com.example.studysmartandroidapp.utils.toLocalDate
 import java.time.LocalDate
 import java.time.ZoneOffset
 

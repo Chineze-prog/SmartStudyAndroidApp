@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.R
-import com.example.studysmartandroidapp.presentation.domain.model.Session
+import com.example.studysmartandroidapp.domain.model.Session
 
 fun LazyListScope.studySessionsList(
     sectionTitle: String,

@@ -1,7 +1,12 @@
-package com.example.studysmartandroidapp.presentation.domain.model
+package com.example.studysmartandroidapp.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class Task(
-    val taskId: Int,
+    @PrimaryKey(autoGenerate = true)
+    val taskId: Int? = null,
     val taskSubjectId: Int,
     val title: String,
     val description: String,
