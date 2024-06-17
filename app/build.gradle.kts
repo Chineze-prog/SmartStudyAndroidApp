@@ -6,9 +6,9 @@ plugins {
     alias(libs.plugins.android.code.quality)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
-    id("com.google.devtools.ksp")
+    //id("com.google.devtools.ksp")
     alias(libs.plugins.spotless)
-
+    id("androidx.room")
 }
 
 android {
@@ -55,6 +55,9 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 }
 
@@ -116,6 +119,13 @@ dependencies {
     implementation(libs.hilt.compose.navigation)
 
     // compose Room
+    val room_version = "2.6.1"
+
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+
+    // To use Kotlin Symbol Processing (KSP)
+    kapt(libs.androidx.room.compiler)
     implementation (libs.androidx.room.ktx)
     implementation (libs.androidx.room.common)
 

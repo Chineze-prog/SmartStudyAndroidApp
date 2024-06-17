@@ -12,7 +12,7 @@ interface TaskRepository {
 
     suspend fun deleteTaskBySubjectId(subjectId: Int)
 
-    suspend fun getTasksForSubject(subjectId: Int): Flow<List<Task>>
+    fun getTasksForSubject(subjectId: Int): Flow<List<Task>>
 
     fun getAllTasks(): Flow<List<Task>>
 

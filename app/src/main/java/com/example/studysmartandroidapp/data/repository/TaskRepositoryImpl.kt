@@ -25,7 +25,7 @@ class TaskRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getTasksForSubject(subjectId: Int): Flow<List<Task>> {
+    override fun getTasksForSubject(subjectId: Int): Flow<List<Task>> {
         TODO("Not yet implemented")
     }
 

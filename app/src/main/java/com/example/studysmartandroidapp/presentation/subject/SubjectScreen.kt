@@ -37,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,6 +55,7 @@ import com.example.studysmartandroidapp.sessions
 import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.tasks
 
+// states - are the values that can change
 @Composable
 fun SubjectScreenRoute(navController: NavController, subjectId: Int){
     val subject: Subject? = subjects.find{ it.subjectId == subjectId }
@@ -100,7 +102,8 @@ private fun SubjectScreen(
 
     var goalStudyHours by remember{ mutableStateOf(subject.goalStudyHours.toString()) }
 
-    var selectedColor by rememberSaveable { mutableStateOf(subject.colors) }
+    var selectedColor by rememberSaveable { mutableStateOf(subject.colors
+        .map{ intValue -> Color(intValue) }) }
     //(Subject.subjectCardColors.random()) }
 
     //for editing the subject

@@ -15,7 +15,7 @@ data class Subject(
     val subjectId: Int? = null,
     val subjectName: String,
     val goalStudyHours: Float,
-    val colors: List<Color>
+    val colors: List<Int>
 ){
     companion object{
         val subjectCardColors = listOf(gradient1, gradient2, gradient3, gradient4, gradient5)

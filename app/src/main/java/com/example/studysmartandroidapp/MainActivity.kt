@@ -3,6 +3,7 @@ package com.example.studysmartandroidapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.graphics.toArgb
 import com.example.studysmartandroidapp.domain.model.Session
 import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.domain.model.Task
@@ -25,11 +26,11 @@ class MainActivity : ComponentActivity() {
 }
 
 val subjects = listOf(
-    Subject(subjectId = 1, subjectName = "English", goalStudyHours = 10f, colors = Subject.subjectCardColors[0]),
-    Subject(subjectId = 2, subjectName = "Physics", goalStudyHours = 10f, colors = Subject.subjectCardColors[1]),
-    Subject(subjectId = 3, subjectName = "Maths", goalStudyHours = 10f, colors = Subject.subjectCardColors[2]),
-    Subject(subjectId = 4, subjectName = "Geology", goalStudyHours = 10f, colors = Subject.subjectCardColors[3]),
-    Subject(subjectId = 5, subjectName = "Computer Science", goalStudyHours = 10f, colors = Subject.subjectCardColors[4])
+    Subject(subjectId = 1, subjectName = "English", goalStudyHours = 10f, colors = Subject.subjectCardColors[0].map{ it.toArgb() }),
+    Subject(subjectId = 2, subjectName = "Physics", goalStudyHours = 10f, colors = Subject.subjectCardColors[1].map{ it.toArgb() }),
+    Subject(subjectId = 3, subjectName = "Maths", goalStudyHours = 10f, colors = Subject.subjectCardColors[2].map{ it.toArgb() }),
+    Subject(subjectId = 4, subjectName = "Geology", goalStudyHours = 10f, colors = Subject.subjectCardColors[3].map{ it.toArgb() }),
+    Subject(subjectId = 5, subjectName = "Computer Science", goalStudyHours = 10f, colors = Subject.subjectCardColors[4].map{ it.toArgb() })
 )
 
 val tasks = listOf(
