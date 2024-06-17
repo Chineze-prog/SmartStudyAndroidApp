@@ -8,9 +8,11 @@ import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.presentation.navigation.StudySmartNavGraph
 import com.example.studysmartandroidapp.presentation.theme.StudySmartAndroidAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.ZoneOffset
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

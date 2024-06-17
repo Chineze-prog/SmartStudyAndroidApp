@@ -51,9 +51,12 @@ import com.example.studysmartandroidapp.presentation.task.navigateToTask
 import com.example.studysmartandroidapp.sessions
 import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.tasks
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun DashboardScreenRoute(navController: NavController){
+    val viewModel: DashboardViewModel = hiltViewModel()
+
     DashboardScreen(
         onStartSessionButtonClick = { navController.navigate("session") },
         onSubjectCardClick = {subjectId ->

@@ -2,6 +2,8 @@
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
-    id("com.google.dagger.hilt.android") version "2.44" apply false
-    id("com.google.devtools.ksp") version "2.0.0-RC3-1.0.20" apply false
+    id("com.google.dagger.hilt.android") version "2.51" apply false
+    id("com.google.devtools.ksp") version "1.9.22-1.0.18" apply false
+    //alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.spotless) apply false
 }

@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.ProjectDatePicker
@@ -64,6 +65,8 @@ import java.time.ZoneOffset
 fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?){
     val task: Task? = tasks.find{ it.taskId == taskId }
     val relatedSubject: Subject? = subjects.find{ it.subjectId == subjectId }
+
+    val viewModel: TaskViewModel = hiltViewModel()
 
     TaskScreen(
         subject = relatedSubject,

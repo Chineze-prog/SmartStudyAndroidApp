@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.studysmartandroidapp.presentation.components.AddSubjectDialogue
 import com.example.studysmartandroidapp.presentation.components.CountCard
@@ -56,6 +57,9 @@ import com.example.studysmartandroidapp.tasks
 @Composable
 fun SubjectScreenRoute(navController: NavController, subjectId: Int){
     val subject: Subject? = subjects.find{ it.subjectId == subjectId }
+
+    val viewModel: SubjectViewModel = hiltViewModel()
+
     if (subject != null) {
         SubjectScreen(
             subject = subject,
