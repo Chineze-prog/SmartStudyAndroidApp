@@ -10,11 +10,11 @@ interface SessionRepository {
 
     fun getAllSessions(): Flow<List<Session>>
 
-    fun getRecentSessionsForSubject(subjectId: Int): Flow<List<Session>>
+    fun getRecentSessionsFiveSessions(): Flow<List<Session>>
+
+    fun getRecentSessionsTenSessionsForSubject(subjectId: Int): Flow<List<Session>>
 
     fun getTotalSessionsDuration(): Flow<Long>
 
     fun getTotalSessionsDurationBySubjectId(subjectId: Int): Flow<Long>
-
-    fun deleteSessionsBySubjectId(subjectId: Int)
 }

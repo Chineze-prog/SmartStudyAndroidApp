@@ -21,15 +21,16 @@ class TaskRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteTaskBySubjectId(subjectId: Int) {
+    override fun getUpcomingTasksForSubject(subjectId: Int): Flow<List<Task>> {
         TODO("Not yet implemented")
     }
 
-    override fun getTasksForSubject(subjectId: Int): Flow<List<Task>> {
+    override fun getCompletedTasksForSubject(subjectId: Int): Flow<List<Task>> {
         TODO("Not yet implemented")
     }
 
-    override fun getAllTasks(): Flow<List<Task>> {
-        TODO("Not yet implemented")
+    override fun getAllUpcomingTasks(): Flow<List<Task>> {
+        // we have to filter out incomplete tasks since getAllTasks() returns all tasks
+        return taskDao.getAllTasks()
     }
 }

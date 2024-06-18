@@ -3,13 +3,17 @@ package com.example.studysmartandroidapp.presentation.dashboard
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.studysmartandroidapp.domain.model.Session
 import com.example.studysmartandroidapp.domain.model.Subject
+import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.domain.repository.SessionRepository
 import com.example.studysmartandroidapp.domain.repository.SubjectRepository
+import com.example.studysmartandroidapp.domain.repository.TaskRepository
 import com.example.studysmartandroidapp.utils.toHours
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -26,11 +30,13 @@ import javax.inject.Inject
 // is a ViewModel
 class DashboardViewModel @Inject constructor(
     private val subjectRepository: SubjectRepository,
-    private val sessionRepository: SessionRepository
+    private val sessionRepository: SessionRepository,
+    private val taskRepository: TaskRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(DashboardState())
 
     // combine - takes multiple flow states and combines them into a single flow state
+    //cant accept more than 5 flow values
     val state = combine(
         _state,
         subjectRepository.getTotalSubjectCount(),
@@ -58,10 +64,26 @@ class DashboardViewModel @Inject constructor(
         initialValue = DashboardState()
     )
 
+    val tasks: StateFlow<List<Task>> = taskRepository.getAllUpcomingTasks()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    val recentSessions: StateFlow<List<Session>> = sessionRepository.getRecentSessionsFiveSessions()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+
     //managing the events
     fun onEvent(event: DashboardEvent){
         when(event){
             DashboardEvent.DeleteSession -> {
+                TODO()
             }
 
             is DashboardEvent.OnDeleteSessionButtonClick -> {
@@ -92,9 +114,7 @@ class DashboardViewModel @Inject constructor(
                 TODO()
             }
 
-            DashboardEvent.SaveSubject -> {
-                saveSubject()
-            }
+            DashboardEvent.SaveSubject -> saveSubject()
         }
     }
 

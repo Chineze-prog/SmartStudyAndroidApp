@@ -47,18 +47,22 @@ import com.example.studysmartandroidapp.presentation.components.tasksList
 import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
 import com.example.studysmartandroidapp.presentation.task.navigateToTask
-import com.example.studysmartandroidapp.sessions
-import com.example.studysmartandroidapp.tasks
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.studysmartandroidapp.domain.model.Session
+import com.example.studysmartandroidapp.domain.model.Task
 
 @Composable
 fun DashboardScreenRoute(navController: NavController){
     val viewModel: DashboardViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val tasks by viewModel.tasks.collectAsStateWithLifecycle()
+    val recentSessions by viewModel.recentSessions.collectAsStateWithLifecycle()
 
     DashboardScreen(
         state = state,
+        tasks = tasks,
+        recentSessions = recentSessions,
         onEvent = viewModel::onEvent,
         onStartSessionButtonClick = { navController.navigate("session") },
         onSubjectCardClick = {subjectId ->
@@ -73,6 +77,8 @@ fun DashboardScreenRoute(navController: NavController){
 @Composable
 private fun DashboardScreen(
     state: DashboardState,
+    tasks: List<Task>,
+    recentSessions: List<Session>,
     onEvent: (DashboardEvent) -> Unit,
     onStartSessionButtonClick: () -> Unit,
     onSubjectCardClick: (Int?) -> Unit,
@@ -163,7 +169,7 @@ private fun DashboardScreen(
 
             studySessionsList(
                 sectionTitle = "RECENT STUDY SESSIONS",
-                sessions = sessions,
+                sessions = recentSessions,
                 emptyListText = "You don't have any recent study sessions.\n Start a study " +
                         "session to begin recording your progress.\n",
                 onDeleteIconClick = { session ->
