@@ -1,6 +1,5 @@
 package com.example.studysmartandroidapp.domain.model
 
-import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.studysmartandroidapp.presentation.theme.gradient1

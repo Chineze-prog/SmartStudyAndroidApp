@@ -3,7 +3,6 @@ package com.example.studysmartandroidapp.data.local
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.domain.model.Task
 import kotlinx.coroutines.flow.Flow
 
