@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,11 +48,9 @@ import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
 import com.example.studysmartandroidapp.presentation.task.navigateToTask
 import com.example.studysmartandroidapp.sessions
-import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.tasks
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-
 
 @Composable
 fun DashboardScreenRoute(navController: NavController){
@@ -81,11 +78,9 @@ private fun DashboardScreen(
     onSubjectCardClick: (Int?) -> Unit,
     onTaskCardClick: (Int?) -> Unit
 ){
-
     var isAddSubjectDialogueOpen by rememberSaveable { mutableStateOf(false) }
 
     var isDeleteSessionDialogueOpen by rememberSaveable { mutableStateOf(false) }
-
 
     AddSubjectDialogue(
         isOpen = isAddSubjectDialogueOpen,
@@ -95,11 +90,11 @@ private fun DashboardScreen(
         onDismissRequest = { isAddSubjectDialogueOpen = false },
         onConfirmButtonClick = {
             isAddSubjectDialogueOpen = false
-            onEvent(DashboardEvent.saveSubject)
+            onEvent(DashboardEvent.SaveSubject)
         },
-        onColorChange = { newColor -> onEvent(DashboardEvent.onSubjectCardColorChange(newColor)) },
-        onSubjectNameChange = { newName -> onEvent(DashboardEvent.onSubjectNameChange(newName)) },
-        onGoalStudyHoursChange = { newGsh -> onEvent(DashboardEvent.onGoalStudyHoursChange(newGsh)) }
+        onColorChange = { newColor -> onEvent(DashboardEvent.OnSubjectCardColorChange(newColor)) },
+        onSubjectNameChange = { newName -> onEvent(DashboardEvent.OnSubjectNameChange(newName)) },
+        onGoalStudyHoursChange = { newGsh -> onEvent(DashboardEvent.OnGoalStudyHoursChange(newGsh)) }
     )
 
     DeleteDialogue(
@@ -110,7 +105,7 @@ private fun DashboardScreen(
         onDismissRequest = { isDeleteSessionDialogueOpen = false },
         onConfirmButtonClick = {
             isDeleteSessionDialogueOpen = false
-            onEvent(DashboardEvent.deleteSubject)
+            onEvent(DashboardEvent.DeleteSession)
         }
     )
 
@@ -134,7 +129,6 @@ private fun DashboardScreen(
             item{//subject cards
                 SubjectCardsSection(
                     modifier = Modifier.fillMaxWidth(),
-                    //subjectsList = emptyList()
                     subjectsList = state.subjects,
                     onAddIconClick = { isAddSubjectDialogueOpen = true },
                     onSubjectCardClick = onSubjectCardClick
@@ -148,19 +142,18 @@ private fun DashboardScreen(
                         .padding(horizontal = 48.dp, vertical = 20.dp),
                     onClick = onStartSessionButtonClick
                 ) {
-                        Text(text = "Start Study Session")
+                    Text(text = "Start Study Session")
                 }
             }
 
             tasksList(
                 sectionTitle = "UPCOMING TASKS",
-                //tasks = emptyList(),
                 tasks = tasks,
                 emptyListText = "You don't have any upcoming tasks.\n Click the + button in the" +
                         " subject screen to add a new task.",
                 onTaskCardClick = onTaskCardClick,
                 onCheckBoxClick = {
-                    newStatus -> onEvent(DashboardEvent.onTaskIsCompleteChange(newStatus))
+                    newStatus -> onEvent(DashboardEvent.OnTaskIsCompleteChange(newStatus))
                 }
             )
 
@@ -170,13 +163,12 @@ private fun DashboardScreen(
 
             studySessionsList(
                 sectionTitle = "RECENT STUDY SESSIONS",
-                //sessions = emptyList(),
                 sessions = sessions,
                 emptyListText = "You don't have any recent study sessions.\n Start a study " +
                         "session to begin recording your progress.\n",
                 onDeleteIconClick = { session ->
                     isDeleteSessionDialogueOpen = true
-                    onEvent(DashboardEvent.onDeleteSessionButtonClick(session))
+                    onEvent(DashboardEvent.OnDeleteSessionButtonClick(session))
                 }
             )
         }

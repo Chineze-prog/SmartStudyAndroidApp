@@ -18,17 +18,17 @@ sealed class DashboardEvent {
     // if some value is also coming through from the user's side then we use data class otherwise
     // use data object
 
-    data object saveSubject: DashboardEvent()
+    data object SaveSubject: DashboardEvent()
 
-    data object deleteSubject: DashboardEvent()
+    data object DeleteSession: DashboardEvent()
 
-    data class onDeleteSessionButtonClick(val session: Session): DashboardEvent()
+    data class OnDeleteSessionButtonClick(val session: Session): DashboardEvent()
 
-    data class onTaskIsCompleteChange(val task: Task): DashboardEvent()
+    data class OnTaskIsCompleteChange(val task: Task): DashboardEvent()
 
-    data class onSubjectCardColorChange(val colors: List<Color>): DashboardEvent()
+    data class OnSubjectCardColorChange(val colors: List<Color>): DashboardEvent()
 
-    data class onSubjectNameChange(val name: String): DashboardEvent()
+    data class OnSubjectNameChange(val name: String): DashboardEvent()
 
-    data class onGoalStudyHoursChange(val hours: String): DashboardEvent()
+    data class OnGoalStudyHoursChange(val hours: String): DashboardEvent()
 }

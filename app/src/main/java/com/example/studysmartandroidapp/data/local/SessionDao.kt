@@ -21,7 +21,8 @@ interface SessionDao {
     @Query("SELECT * FROM SESSION WHERE sessionSubjectId = :subjectId")
     fun getRecentSessionsForSubject(subjectId: Int): Flow<List<Session>>
 
-    @Query("SELECT SUM(duration) FROM SESSION")
+    //not sure why this was giving me an error but by changing it, it works now
+    @Query("SELECT COALESCE(SUM(duration), 0) FROM SESSION")
     fun getTotalSessionsDuration(): Flow<Long>
 
     @Query("SELECT SUM(duration) FROM SESSION WHERE sessionSubjectId = :subjectId")

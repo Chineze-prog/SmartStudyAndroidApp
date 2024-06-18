@@ -1,7 +1,5 @@
 package com.example.studysmartandroidapp.presentation.dashboard
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,7 +39,6 @@ class DashboardViewModel @Inject constructor(
         sessionRepository.getTotalSessionsDuration()
     ){
         state, subjectCount, goalHours, subjects, totalSessionDuration ->
-        Log.d(TAG, "Combining states: subjectCount=$subjectCount, goalHours=$goalHours, subjects=$subjects, totalSessionDuration=$totalSessionDuration")
 
         state.copy(
 
@@ -63,39 +60,41 @@ class DashboardViewModel @Inject constructor(
 
     //managing the events
     fun onEvent(event: DashboardEvent){
-        Log.d(TAG, "Event received: $event")
         when(event){
-            DashboardEvent.deleteSubject -> {
-
+            DashboardEvent.DeleteSession -> {
             }
 
-            is DashboardEvent.onDeleteSessionButtonClick -> {
+            is DashboardEvent.OnDeleteSessionButtonClick -> {
                 _state.update { dashboardState ->
                     dashboardState.copy(session = event.session)
                 }
             }
 
-            is DashboardEvent.onGoalStudyHoursChange -> {
+            is DashboardEvent.OnGoalStudyHoursChange -> {
                 _state.update { dashboardState ->
                     dashboardState.copy(goalStudyHours = event.hours)
                 }
             }
 
-            is DashboardEvent.onSubjectCardColorChange -> {
+            is DashboardEvent.OnSubjectCardColorChange -> {
                 _state.update { dashboardState ->
                     dashboardState.copy(subjectCardColors = event.colors)
                 }
             }
 
-            is DashboardEvent.onSubjectNameChange -> {
-                _state.update { dashboardState ->
+            is DashboardEvent.OnSubjectNameChange -> {
+               _state.update { dashboardState ->
                     dashboardState.copy(subjectName = event.name)
                 }
             }
 
-            is DashboardEvent.onTaskIsCompleteChange -> TODO()
+            is DashboardEvent.OnTaskIsCompleteChange -> {
+                TODO()
+            }
 
-            DashboardEvent.saveSubject -> saveSubject()
+            DashboardEvent.SaveSubject -> {
+                saveSubject()
+            }
         }
     }
 
@@ -107,6 +106,14 @@ class DashboardViewModel @Inject constructor(
                     goalStudyHours = state.value.goalStudyHours.toFloatOrNull() ?: 1f,
                     colors = state.value.subjectCardColors.map { color -> color.toArgb() }
                 )
+            )
+        }
+
+        _state.update { dashboardState ->
+            dashboardState.copy(
+                subjectName = "",
+                goalStudyHours = "",
+                subjectCardColors = Subject.subjectCardColors.random()
             )
         }
     }

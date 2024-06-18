@@ -24,7 +24,8 @@ interface SubjectDao {
     @Query("SELECT COUNT(*) FROM SUBJECT")
     fun getTotalSubjectCount(): Flow<Int>
 
-    @Query("SELECT SUM(goalStudyHours) FROM SUBJECT")
+    //not sure why this was giving me an error but by changing it, it works now
+    @Query("SELECT COALESCE(SUM(goalStudyHours), 0) FROM SUBJECT")
     fun getTotalGoalHours(): Flow<Float>
 
     @Query("SELECT * FROM SUBJECT WHERE subjectId = :subjectId")
