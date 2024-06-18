@@ -1,5 +1,6 @@
 package com.example.studysmartandroidapp.di
 
+import com.example.studysmartandroidapp.data.repository.SessionRepositoryImpl
 import com.example.studysmartandroidapp.data.repository.SubjectRepositoryImpl
 import com.example.studysmartandroidapp.data.repository.TaskRepositoryImpl
 import com.example.studysmartandroidapp.domain.repository.SessionRepository
@@ -26,6 +27,5 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindSessionRepository(impl: SessionRepository): SessionRepository
-
+    abstract fun bindSessionRepository(impl: SessionRepositoryImpl): SessionRepository
 }
