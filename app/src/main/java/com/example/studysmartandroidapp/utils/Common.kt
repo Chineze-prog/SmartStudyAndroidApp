@@ -24,7 +24,7 @@ fun Long?.changeMillisToDateString(): String{
     val date: LocalDate = this?.let{ millis ->
         Instant
             .ofEpochMilli(millis)
-            .atZone(ZoneOffset.UTC)//ZoneId.systemDefault())
+            .atZone(ZoneOffset.UTC)
             .toLocalDate()
     } ?: LocalDate.now()
 
@@ -52,4 +52,6 @@ sealed class SnackbarEvent{
         val message: String,
         val duration: SnackbarDuration = SnackbarDuration.Short
     ): SnackbarEvent()
+
+    data object NavigateUp: SnackbarEvent()
 }

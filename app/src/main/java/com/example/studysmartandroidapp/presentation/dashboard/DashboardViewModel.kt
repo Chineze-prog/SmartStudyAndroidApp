@@ -64,7 +64,7 @@ class DashboardViewModel @Inject constructor(
         scope = viewModelScope,
         // while subscribed means that the state should continue emitting values as long as there is a
         // subscriber and if there isn't a subscriber after 5 secs it should stop emitting updates
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
         initialValue = DashboardState()
     )
 
@@ -146,7 +146,7 @@ class DashboardViewModel @Inject constructor(
 
                 //if successful display success message
                 _snackbarEventFlow.emit(
-                    SnackbarEvent.ShowSnackbar("Subject saved successfully")
+                    SnackbarEvent.ShowSnackbar("Subject saved successfully.")
                 )
             }
             catch(e: Exception){

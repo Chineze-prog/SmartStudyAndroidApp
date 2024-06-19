@@ -109,6 +109,8 @@ private fun DashboardScreen(
                         duration = event.duration
                     )
                 }
+
+                SnackbarEvent.NavigateUp -> {}
             }
         }
     }
@@ -120,8 +122,8 @@ private fun DashboardScreen(
         selectedColors = state.subjectCardColors,
         onDismissRequest = { isAddSubjectDialogueOpen = false },
         onConfirmButtonClick = {
-            isAddSubjectDialogueOpen = false
             onEvent(DashboardEvent.SaveSubject)
+            isAddSubjectDialogueOpen = false
         },
         onColorChange = { newColor -> onEvent(DashboardEvent.OnSubjectCardColorChange(newColor)) },
         onSubjectNameChange = { newName -> onEvent(DashboardEvent.OnSubjectNameChange(newName)) },
@@ -135,8 +137,8 @@ private fun DashboardScreen(
                 "reduced by this session's time.\nTHIS ACTION CANNOT BE UNDONE.",
         onDismissRequest = { isDeleteSessionDialogueOpen = false },
         onConfirmButtonClick = {
-            isDeleteSessionDialogueOpen = false
             onEvent(DashboardEvent.DeleteSession)
+            isDeleteSessionDialogueOpen = false
         }
     )
 
@@ -201,8 +203,8 @@ private fun DashboardScreen(
                 emptyListText = "You don't have any recent study sessions.\n Start a study " +
                         "session to begin recording your progress.\n",
                 onDeleteIconClick = { session ->
-                    isDeleteSessionDialogueOpen = true
                     onEvent(DashboardEvent.OnDeleteSessionButtonClick(session))
+                    isDeleteSessionDialogueOpen = true
                 }
             )
         }
@@ -300,7 +302,7 @@ private fun SubjectCardsSection(
 
         LazyRow (
             horizontalArrangement = Arrangement.spacedBy(12.dp),//space between each
-            contentPadding = PaddingValues(start = 12.dp, end = 12.dp) //space at the beginning and end
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp)//space at the beginning and end
         ){
             items(subjectsList){subject ->
                 SubjectCard(

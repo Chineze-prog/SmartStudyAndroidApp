@@ -25,8 +25,8 @@ interface SessionDao {
     @Query("SELECT COALESCE(SUM(duration), 0) FROM SESSION")
     fun getTotalSessionsDuration(): Flow<Long>
 
-    @Query("SELECT SUM(duration) FROM SESSION WHERE sessionSubjectId = :subjectId")
-    fun getTotalSessionsDurationBySubjectId(subjectId: Int): Flow<Long>
+    @Query("SELECT COALESCE(SUM(duration), 0) FROM SESSION WHERE sessionSubjectId = :subjectId")
+    fun getTotalSessionsDurationBySubject(subjectId: Int): Flow<Long>
 
     @Query("DELETE FROM SESSION WHERE sessionSubjectId = :subjectId")
     fun deleteSessionsBySubjectId(subjectId: Int)
