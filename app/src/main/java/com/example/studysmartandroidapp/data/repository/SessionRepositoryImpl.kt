@@ -4,6 +4,7 @@ import com.example.studysmartandroidapp.data.local.SessionDao
 import com.example.studysmartandroidapp.domain.model.Session
 import com.example.studysmartandroidapp.domain.repository.SessionRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 class SessionRepositoryImpl @Inject constructor(
@@ -18,15 +19,15 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     override fun getAllSessions(): Flow<List<Session>> {
-        TODO("Not yet implemented")
+        return sessionDao.getAllSessions()
     }
 
     override fun getRecentSessionsFiveSessions(): Flow<List<Session>> {
-        TODO("Not yet implemented")
+        return sessionDao.getAllSessions().take(count = 5)
     }
 
     override fun getRecentSessionsTenSessionsForSubject(subjectId: Int): Flow<List<Session>> {
-        TODO("Not yet implemented")
+        return sessionDao.getRecentSessionsForSubject(subjectId).take(count = 10)
     }
 
     override fun getTotalSessionsDuration(): Flow<Long> {
@@ -34,6 +35,6 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     override fun getTotalSessionsDurationBySubjectId(subjectId: Int): Flow<Long> {
-        TODO("Not yet implemented")
+        return sessionDao.getTotalSessionsDurationBySubjectId(subjectId)
     }
 }

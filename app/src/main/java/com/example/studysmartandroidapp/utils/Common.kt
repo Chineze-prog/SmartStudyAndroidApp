@@ -1,5 +1,6 @@
 package com.example.studysmartandroidapp.utils
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.ui.graphics.Color
 import com.example.studysmartandroidapp.presentation.theme.Green
 import com.example.studysmartandroidapp.presentation.theme.Orange
@@ -37,4 +38,18 @@ fun Long.toLocalDate(): LocalDate{
 fun Long.toHours(): Float{
     val hours = this.toFloat() / 3600f
     return "%.2f".format(hours).toFloat()
+}
+
+/*
+    A sealed class in Kotlin is a class that is marked with the sealed keyword. It is used to define
+    a closed set of subclasses. A sealed class is a way to define a restricted class hierarchy where
+    subclasses are predefined and finite. The subclasses of a sealed class are defined within the
+    sealed class itself, and each subclass must be declared as inner or data or class, with no other
+    modifiers allowed.
+ */
+sealed class SnackbarEvent{
+    data class ShowSnackbar(
+        val message: String,
+        val duration: SnackbarDuration = SnackbarDuration.Short
+    ): SnackbarEvent()
 }

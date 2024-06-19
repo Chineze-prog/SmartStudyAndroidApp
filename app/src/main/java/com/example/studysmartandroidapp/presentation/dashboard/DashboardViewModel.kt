@@ -1,5 +1,6 @@
 package com.example.studysmartandroidapp.presentation.dashboard
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,11 +10,14 @@ import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.domain.repository.SessionRepository
 import com.example.studysmartandroidapp.domain.repository.SubjectRepository
 import com.example.studysmartandroidapp.domain.repository.TaskRepository
+import com.example.studysmartandroidapp.utils.SnackbarEvent
 import com.example.studysmartandroidapp.utils.toHours
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -78,6 +82,9 @@ class DashboardViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    //we're using mutable shared flow because it doesn't hold any initial values
+    private val _snackbarEventFlow = MutableSharedFlow<SnackbarEvent>()
+    val snackbarEventFlow = _snackbarEventFlow.asSharedFlow()
 
     //managing the events
     fun onEvent(event: DashboardEvent){
@@ -120,21 +127,37 @@ class DashboardViewModel @Inject constructor(
 
     private fun saveSubject() {
         viewModelScope.launch {
-            subjectRepository.upsertSubject(
-                subject = Subject(
-                    subjectName = state.value.subjectName,
-                    goalStudyHours = state.value.goalStudyHours.toFloatOrNull() ?: 1f,
-                    colors = state.value.subjectCardColors.map { color -> color.toArgb() }
+            try {
+                subjectRepository.upsertSubject(
+                    subject = Subject(
+                        subjectName = state.value.subjectName,
+                        goalStudyHours = state.value.goalStudyHours.toFloatOrNull() ?: 1f,
+                        colors = state.value.subjectCardColors.map { color -> color.toArgb() }
+                    )
                 )
-            )
-        }
 
-        _state.update { dashboardState ->
-            dashboardState.copy(
-                subjectName = "",
-                goalStudyHours = "",
-                subjectCardColors = Subject.subjectCardColors.random()
-            )
+                _state.update { dashboardState ->
+                    dashboardState.copy(
+                        subjectName = "",
+                        goalStudyHours = "",
+                        subjectCardColors = Subject.subjectCardColors.random()
+                    )
+                }
+
+                //if successful display success message
+                _snackbarEventFlow.emit(
+                    SnackbarEvent.ShowSnackbar("Subject saved successfully")
+                )
+            }
+            catch(e: Exception){
+                //else display error message
+                _snackbarEventFlow.emit(
+                    SnackbarEvent.ShowSnackbar(
+                        message = "Couldn't save subject.\n ${e.message}",
+                        duration = SnackbarDuration.Long
+                    )
+                )
+            }
         }
     }
 }

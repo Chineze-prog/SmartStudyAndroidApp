@@ -24,10 +24,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,6 +55,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.studysmartandroidapp.domain.model.Session
 import com.example.studysmartandroidapp.domain.model.Task
+import com.example.studysmartandroidapp.utils.SnackbarEvent
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DashboardScreenRoute(navController: NavController){
@@ -64,6 +71,7 @@ fun DashboardScreenRoute(navController: NavController){
         tasks = tasks,
         recentSessions = recentSessions,
         onEvent = viewModel::onEvent,
+        snackbarEvent = viewModel.snackbarEventFlow,
         onStartSessionButtonClick = { navController.navigate("session") },
         onSubjectCardClick = {subjectId ->
             if (subjectId != null) {
@@ -80,6 +88,7 @@ private fun DashboardScreen(
     tasks: List<Task>,
     recentSessions: List<Session>,
     onEvent: (DashboardEvent) -> Unit,
+    snackbarEvent: SharedFlow<SnackbarEvent>,
     onStartSessionButtonClick: () -> Unit,
     onSubjectCardClick: (Int?) -> Unit,
     onTaskCardClick: (Int?) -> Unit
@@ -87,6 +96,22 @@ private fun DashboardScreen(
     var isAddSubjectDialogueOpen by rememberSaveable { mutableStateOf(false) }
 
     var isDeleteSessionDialogueOpen by rememberSaveable { mutableStateOf(false) }
+
+    //snackbar host state
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        snackbarEvent.collectLatest { event ->
+            when(event) {
+                is SnackbarEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                        duration = event.duration
+                    )
+                }
+            }
+        }
+    }
 
     AddSubjectDialogue(
         isOpen = isAddSubjectDialogueOpen,
@@ -115,7 +140,10 @@ private fun DashboardScreen(
         }
     )
 
-    Scaffold( topBar = { DashboardScreenTopBar() }) { paddingValues ->
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = { DashboardScreenTopBar() }
+    ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

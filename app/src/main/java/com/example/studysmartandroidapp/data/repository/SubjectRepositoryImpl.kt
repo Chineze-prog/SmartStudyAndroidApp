@@ -22,11 +22,11 @@ class SubjectRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSubjectById(subjectId: Int): Subject? {
-        TODO("Not yet implemented")
+        return subjectDao.getSubjectById(subjectId)
     }
 
     override suspend fun deleteSubject(subjectId: Int) {
-        TODO("Not yet implemented")
+        return subjectDao.deleteSubject(subjectId)
     }
 
     override fun getAllSubjects(): Flow<List<Subject>> {
