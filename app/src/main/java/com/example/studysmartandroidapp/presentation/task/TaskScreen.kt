@@ -298,10 +298,10 @@ private fun TaskScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                val firstSubject = state.subjects.firstOrNull()?.subjectName ?: ""
+                //val firstSubject = state.subjects.firstOrNull()?.subjectName ?: ""
 
                 Text(
-                    text = state.relatedToSubject ?: firstSubject,
+                    text = state.relatedToSubject ?: "",//firstSubject,
                     style = MaterialTheme.typography.bodyLarge
                 )
 

@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import com.example.studysmartandroidapp.utils.toLocalDate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -40,10 +41,11 @@ fun ProjectDatePicker(
                     dateValidator = { timeStamp ->
                         val selectedDate = Instant
                             .ofEpochMilli(timeStamp)
-                            .atZone(ZoneOffset.UTC)//ZoneId.systemDefault())
+                            .atZone(ZoneOffset.UTC)
                             .toLocalDate()
 
-                        val currentDate = LocalDate.now(ZoneOffset.UTC)//ZoneId.systemDefault())
+                        val currentDate = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
+                            .toEpochMilli().toLocalDate()
 
                         selectedDate >= currentDate
                     }
