@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.ProjectDatePicker
@@ -63,39 +64,59 @@ import java.time.ZoneOffset
 
 @Composable
 fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?){
-    val task: Task? = tasks.find{ it.taskId == taskId }
-    val relatedSubject: Subject? = subjects.find{ it.subjectId == subjectId }
+   // val task: Task? = tasks.find{ it.taskId == taskId }
+    //val relatedSubject: Subject? = subjects.find{ it.subjectId == subjectId }
+
+    /**
+     *  if(state.subjectId != null){
+     *                     backToSubject
+     *                 }
+     *                 else{
+     *                     backToDashboard
+     *                 }
+     * backToDashboard = { navController.navigate("dashboard") },
+     *      *         backToSubject = { relatedSubject?.subjectId?.let { navController.navigateToSubject(it) } }
+     *
+     */
 
     val viewModel: TaskViewModel = hiltViewModel()
 
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     TaskScreen(
-        subject = relatedSubject,
-        task = task,
-        backToDashboard = { navController.navigate("dashboard") },
-        backToSubject = { relatedSubject?.subjectId?.let { navController.navigateToSubject(it) } }
+        state = state,
+        onEvent = viewModel::onEvent,
+        onBackClick = {
+            if(state.subjectId != null) {
+                navController.navigateToSubject(state.subjectId!!)
+
+            } else{
+                navController.navigate("dashboard")
+            }
+        }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TaskScreen(
-    subject: Subject?,
-    task: Task?,
-    backToDashboard: () -> Unit,
-    backToSubject: () -> Unit
+    state: TaskState,
+    onEvent: (TaskEvent) -> Unit,
+    onBackClick: () -> Unit
+    //backToDashboard: () -> Unit,
+    //backToSubject: () -> Unit
 ){
 
-    var relatedSubject by remember { mutableStateOf(subject?.subjectName ?: "") }
-    var title by remember { mutableStateOf(task?.title ?: "") }
-    var description by remember { mutableStateOf(task?.description ?: "") }
+    //var relatedSubject by remember { mutableStateOf(subject?.subjectName ?: "") }
 
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = //LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-        if(task == null || task.dueDate.toLocalDate()
-            <  LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli().toLocalDate()){
+        initialSelectedDateMillis =
+        if(state.currentTaskId == null || state.dueDate == null ||
+            state.dueDate.toLocalDate() < LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
+                .toEpochMilli().toLocalDate()){
             LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
         }
-        else{ task.dueDate }
+        else{ state.dueDate }
     )
 
     var isDatePickerDialogueOpen by remember{ mutableStateOf(false) }
@@ -109,9 +130,9 @@ private fun TaskScreen(
     var taskTitleError by rememberSaveable { mutableStateOf <String?> (null) }
 
     taskTitleError = when{
-        title.isBlank() -> "Please enter task title."
-        title.length < 4 -> "Task title is too short."
-        title.length > 20 -> "Task title is too long."
+        state.title.isBlank() -> "Please enter task title."
+        state.title.length < 4 -> "Task title is too short."
+        state.title.length > 20 -> "Task title is too long."
         else -> null
     }
 
@@ -120,26 +141,31 @@ private fun TaskScreen(
         title = "Delete Task?",
         bodyText = "Are you sure you want to delete this task?\nTHIS ACTION CANNOT BE UNDONE.",
         onDismissRequest = { isDeleteTaskDialogueOpen = false },
-        onConfirmButtonClick = { isDeleteTaskDialogueOpen = false }
+        onConfirmButtonClick = {
+            onEvent(TaskEvent.DeleteTask)
+            isDeleteTaskDialogueOpen = false }
     )
 
     ProjectDatePicker(
         state = datePickerState,
         isOpen = isDatePickerDialogueOpen,
         onDismissRequest = { isDatePickerDialogueOpen = false },
-        onConfirmButtonClick = { isDatePickerDialogueOpen = false  }
+        onConfirmButtonClick = {
+            onEvent(TaskEvent.OnDateChange(millis = datePickerState.selectedDateMillis))
+            isDatePickerDialogueOpen = false  }
     )
 
     SubjectListBottomSheet(
         sheetState = sheetState,
         isOpen = isBottomSheetOpen,
-        subjects = subjects,
+        subjects = state.subjects,
         //how to dismiss a bottom sheet if not through the onDismissRequest
-        onSubjectClick = {
+        onSubjectClick = {relatedSubject ->
             scope.launch { sheetState.hide() }.invokeOnCompletion {
                 if(!sheetState.isVisible) isBottomSheetOpen = false
             }
-            relatedSubject = it.subjectName
+
+            onEvent(TaskEvent.OnRelatedSubjectSelect(relatedSubject))
         },
         onDismissRequest = { isBottomSheetOpen = false}
     )
@@ -147,19 +173,13 @@ private fun TaskScreen(
     Scaffold (
         topBar = {
             TaskScreenTopBar(
-                taskExists = true,
-                isComplete = task?.isComplete ?: false,
-                taskName = task?.title ?: "",
-                checkBoxBorderColor = Red,
-                onBackButtonClick =
-                    if(subject != null){
-                        backToSubject
-                    }
-                    else{
-                        backToDashboard
-                    },
+                taskExists = state.currentTaskId != null,
+                isComplete = state.isTaskComplete,
+                taskName = state.title,
+                checkBoxBorderColor = state.priority.color,
+                onBackButtonClick = onBackClick,
                 onDeleteButtonClick = { isDeleteTaskDialogueOpen = true },
-                onCheckBoxClick = { /*TODO*/ }
+                onCheckBoxClick = { onEvent(TaskEvent.OnIsCompleteChange) }
             )
         }
     ){ paddingValue ->
@@ -171,19 +191,19 @@ private fun TaskScreen(
                 .padding(horizontal = 12.dp)
         ){
             OutlinedTextField(
-                value = title,
-                onValueChange = {newTitle -> title = newTitle},
+                value = state.title,
+                onValueChange = { newTitle -> onEvent(TaskEvent.OnTitleChange(newTitle)) },
                 label = { Text(text = "Title") },
                 singleLine = true,
-                isError = taskTitleError != null && title.isNotBlank(),
+                isError = taskTitleError != null && state.title.isNotBlank(),
                 supportingText = { Text(text = taskTitleError.orEmpty()) }
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
             OutlinedTextField(
-                value = description,
-                onValueChange = {newDescription -> description = newDescription},
+                value = state.description,
+                onValueChange = { newDesc -> onEvent(TaskEvent.OnTitleChange(newDesc)) },
                 label = { Text(text = "Description") },
                 //singleLine = true, so the text field can have multiple lines
             )
@@ -201,7 +221,7 @@ private fun TaskScreen(
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
-                    text = datePickerState.selectedDateMillis.changeMillisToDateString(),
+                    text = state.dueDate.changeMillisToDateString(),
                     style = MaterialTheme.typography.bodyLarge
                 )
 
@@ -229,12 +249,12 @@ private fun TaskScreen(
                         label = priority.title,
                         backgroundColor = priority.color,
                         //will change once view model is implemented
-                        borderColor = if (priority == Priority.MEDIUM) { Color.White }
+                        borderColor = if (priority == state.priority) { Color.White }
                         else Color.Transparent,
                         //will change once view model is implemented
-                        labelColor = if (priority == Priority.MEDIUM) { Color.White }
+                        labelColor = if (priority == state.priority) { Color.White }
                         else Color.White.copy(alpha = 0.7f),
-                        onPriorityButtonClick = { /*TODO*/ }
+                        onPriorityButtonClick = { onEvent(TaskEvent.OnPriorityChange(priority)) }
                     )
                 }
             }
@@ -251,8 +271,10 @@ private fun TaskScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
+                val firstSubject = state.subjects.firstOrNull()?.subjectName ?: ""
+
                 Text(
-                    text = relatedSubject,
+                    text = state.relatedToSubject ?: firstSubject,
                     style = MaterialTheme.typography.bodyLarge
                 )
 
@@ -266,13 +288,7 @@ private fun TaskScreen(
 
             Button(
                 enabled = taskTitleError == null,
-                onClick =
-                if(subject != null){
-                    backToSubject
-                }
-                else{
-                    backToDashboard
-                },
+                onClick = { onEvent(TaskEvent.SaveTask) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)

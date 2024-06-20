@@ -73,7 +73,7 @@ fun DashboardScreenRoute(navController: NavController){
         onEvent = viewModel::onEvent,
         snackbarEvent = viewModel.snackbarEventFlow,
         onStartSessionButtonClick = { navController.navigate("session") },
-        onSubjectCardClick = {subjectId ->
+        onSubjectCardClick = { subjectId ->
             if (subjectId != null) {
                 navController.navigateToSubject(subjectId)
             }

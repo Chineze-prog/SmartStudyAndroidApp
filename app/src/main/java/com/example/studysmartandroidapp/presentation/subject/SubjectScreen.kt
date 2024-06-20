@@ -62,22 +62,22 @@ import kotlinx.coroutines.flow.collectLatest
 // states - are the values that can change
 @Composable
 fun SubjectScreenRoute(navController: NavController, subjectId: Int){
-    val subject: Subject? = subjects.find{ it.subjectId == subjectId }
+    //val subject: Subject? = subjects.find{ it.subjectId == subjectId }
 
-    val viewModel: SubjectViewModel = hiltViewModel() //key = subjectId.toString())
+    val viewModel: SubjectViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    if (subject != null) {
+    if (state.currentSubjectId != null) {
         SubjectScreen(
             state = state,
             onEvent = viewModel::onEvent,
             snackbarEvent = viewModel.snackbarEventFlow,
             onTaskCardClick = {
-                navController.navigateToTask(taskId = it, subjectId = subject.subjectId)
+                navController.navigateToTask(taskId = it, subjectId = state.currentSubjectId)
             },
             onAddTaskClick = {
-                navController.navigateToTask(taskId = null, subjectId = subject.subjectId)
+                navController.navigateToTask(taskId = null, subjectId = state.currentSubjectId)
             },
             onBackButtonClick = { navController.navigate("dashboard") }
         )
