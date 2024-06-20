@@ -66,7 +66,7 @@ class SubjectViewModel @Inject constructor(
     val snackbarEventFlow = _snackbarEventFlow.asSharedFlow()
 
     fun onEvent(event: SubjectEvent){
-        when(event){
+        when(event) {
             SubjectEvent.DeleteSession -> TODO()
 
             SubjectEvent.DeleteSubject -> deleteSubject()
@@ -74,19 +74,19 @@ class SubjectViewModel @Inject constructor(
             is SubjectEvent.OnDeleteSessionButtonClick -> TODO()
 
             is SubjectEvent.OnGoalStudyHoursChange -> {
-                _state.update{ subjectState ->
+                _state.update { subjectState ->
                     subjectState.copy(goalStudyHours = event.hours)
                 }
             }
 
             is SubjectEvent.OnSubjectCardColorChange -> {
-                _state.update{ subjectState ->
+                _state.update { subjectState ->
                     subjectState.copy(subjectCardColors = event.color)
                 }
             }
 
             is SubjectEvent.OnSubjectNameChange -> {
-                _state.update{ subjectState ->
+                _state.update { subjectState ->
                     subjectState.copy(subjectName = event.name)
                 }
             }
@@ -98,7 +98,7 @@ class SubjectViewModel @Inject constructor(
             SubjectEvent.UpdateProgress -> {
                 //coerceIn ensures the value always lies b/w 0 & 1
                 val goalStudyHours = state.value.goalStudyHours.toFloatOrNull() ?: 1f
-                _state.update{ subjectState ->
+                _state.update { subjectState ->
                     subjectState.copy(
                         progress = (state.value.studiedHours / goalStudyHours).coerceIn(0f, 1f)
                     )

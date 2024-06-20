@@ -27,11 +27,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +61,9 @@ import com.example.studysmartandroidapp.utils.changeMillisToDateString
 import com.example.studysmartandroidapp.utils.toLocalDate
 import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.tasks
+import com.example.studysmartandroidapp.utils.SnackbarEvent
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -86,6 +92,7 @@ fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?)
     TaskScreen(
         state = state,
         onEvent = viewModel::onEvent,
+        snackbarEvent = viewModel.snackbarEventFlow,
         onBackClick = {
             if(state.subjectId != null) {
                 navController.navigateToSubject(state.subjectId!!)
@@ -102,6 +109,7 @@ fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?)
 private fun TaskScreen(
     state: TaskState,
     onEvent: (TaskEvent) -> Unit,
+    snackbarEvent: SharedFlow<SnackbarEvent>,
     onBackClick: () -> Unit
     //backToDashboard: () -> Unit,
     //backToSubject: () -> Unit
@@ -134,6 +142,24 @@ private fun TaskScreen(
         state.title.length < 4 -> "Task title is too short."
         state.title.length > 20 -> "Task title is too long."
         else -> null
+    }
+
+    //snackbar host state
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        snackbarEvent.collectLatest { event ->
+            when(event) {
+                is SnackbarEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                        duration = event.duration
+                    )
+                }
+
+                SnackbarEvent.NavigateUp -> { onBackClick() }
+            }
+        }
     }
 
     DeleteDialogue(
@@ -171,6 +197,7 @@ private fun TaskScreen(
     )
 
     Scaffold (
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TaskScreenTopBar(
                 taskExists = state.currentTaskId != null,
