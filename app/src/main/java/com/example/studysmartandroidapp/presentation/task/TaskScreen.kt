@@ -52,15 +52,10 @@ import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.ProjectDatePicker
 import com.example.studysmartandroidapp.presentation.components.SubjectListBottomSheet
 import com.example.studysmartandroidapp.presentation.components.TaskCheckBox
-import com.example.studysmartandroidapp.domain.model.Subject
-import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
-import com.example.studysmartandroidapp.presentation.theme.Red
 import com.example.studysmartandroidapp.utils.Priority
 import com.example.studysmartandroidapp.utils.changeMillisToDateString
 import com.example.studysmartandroidapp.utils.toLocalDate
-import com.example.studysmartandroidapp.subjects
-import com.example.studysmartandroidapp.tasks
 import com.example.studysmartandroidapp.utils.SnackbarEvent
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -69,22 +64,7 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 
 @Composable
-fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?){
-   // val task: Task? = tasks.find{ it.taskId == taskId }
-    //val relatedSubject: Subject? = subjects.find{ it.subjectId == subjectId }
-
-    /**
-     *  if(state.subjectId != null){
-     *                     backToSubject
-     *                 }
-     *                 else{
-     *                     backToDashboard
-     *                 }
-     * backToDashboard = { navController.navigate("dashboard") },
-     *      *         backToSubject = { relatedSubject?.subjectId?.let { navController.navigateToSubject(it) } }
-     *
-     */
-
+fun TaskScreenRoute(navController: NavController, subjectId: Int?){
     val viewModel: TaskViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -94,9 +74,8 @@ fun TaskScreenRoute(navController: NavController, subjectId: Int?, taskId: Int?)
         onEvent = viewModel::onEvent,
         snackbarEvent = viewModel.snackbarEventFlow,
         onBackClick = {
-            if(state.subjectId != null) {
-                navController.navigateToSubject(state.subjectId!!)
-
+            if (subjectId != null) {
+                navController.navigateToSubject(subjectId)
             } else{
                 navController.navigate("dashboard")
             }
@@ -111,17 +90,14 @@ private fun TaskScreen(
     onEvent: (TaskEvent) -> Unit,
     snackbarEvent: SharedFlow<SnackbarEvent>,
     onBackClick: () -> Unit
-    //backToDashboard: () -> Unit,
-    //backToSubject: () -> Unit
 ){
-
-    //var relatedSubject by remember { mutableStateOf(subject?.subjectName ?: "") }
+    val currentDate = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
+        .toEpochMilli().toLocalDate()
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis =
         if(state.currentTaskId == null || state.dueDate == null ||
-            state.dueDate.toLocalDate() < LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
-                .toEpochMilli().toLocalDate()){
+            state.dueDate.toLocalDate() < currentDate){
             LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
         }
         else{ state.dueDate }
@@ -169,7 +145,8 @@ private fun TaskScreen(
         onDismissRequest = { isDeleteTaskDialogueOpen = false },
         onConfirmButtonClick = {
             onEvent(TaskEvent.DeleteTask)
-            isDeleteTaskDialogueOpen = false }
+            isDeleteTaskDialogueOpen = false
+        }
     )
 
     ProjectDatePicker(
@@ -178,7 +155,8 @@ private fun TaskScreen(
         onDismissRequest = { isDatePickerDialogueOpen = false },
         onConfirmButtonClick = {
             onEvent(TaskEvent.OnDateChange(millis = datePickerState.selectedDateMillis))
-            isDatePickerDialogueOpen = false  }
+            isDatePickerDialogueOpen = false
+        }
     )
 
     SubjectListBottomSheet(
@@ -186,7 +164,7 @@ private fun TaskScreen(
         isOpen = isBottomSheetOpen,
         subjects = state.subjects,
         //how to dismiss a bottom sheet if not through the onDismissRequest
-        onSubjectClick = {relatedSubject ->
+        onSubjectClick = { relatedSubject ->
             scope.launch { sheetState.hide() }.invokeOnCompletion {
                 if(!sheetState.isVisible) isBottomSheetOpen = false
             }
@@ -232,7 +210,7 @@ private fun TaskScreen(
                 value = state.description,
                 onValueChange = { newDesc -> onEvent(TaskEvent.OnTitleChange(newDesc)) },
                 label = { Text(text = "Description") },
-                //singleLine = true, so the text field can have multiple lines
+                //singleLine = true, commented so the text field can have multiple lines
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -252,7 +230,7 @@ private fun TaskScreen(
                     style = MaterialTheme.typography.bodyLarge
                 )
 
-                IconButton(onClick = { isDatePickerDialogueOpen = true } ) {
+                IconButton(onClick = { isDatePickerDialogueOpen = true }) {
                     Icon(
                         imageVector = Icons.Default.DateRange,
                         contentDescription = "Select Due Date"
@@ -298,14 +276,12 @@ private fun TaskScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                //val firstSubject = state.subjects.firstOrNull()?.subjectName ?: ""
-
                 Text(
-                    text = state.relatedToSubject ?: "",//firstSubject,
+                    text = state.relatedToSubject ?: "",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
-                IconButton(onClick = { isBottomSheetOpen = true } ) {
+                IconButton(onClick = { isBottomSheetOpen = true }) {
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "Select related subject"
@@ -342,7 +318,8 @@ private fun TaskScreenTopBar(
             IconButton(onClick = onBackButtonClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Navigate Back to Subject")
+                    contentDescription = "Navigate Back to Subject"
+                )
             }
         },
         title = {
@@ -361,7 +338,7 @@ private fun TaskScreenTopBar(
                 )
             }
 
-            IconButton(onClick = onDeleteButtonClick ) {
+            IconButton(onClick = onDeleteButtonClick) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete Subject"

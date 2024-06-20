@@ -29,7 +29,7 @@ class TaskRepositoryImpl @Inject constructor(
     }
 
     override fun getCompletedTasksForSubject(subjectId: Int): Flow<List<Task>> {
-        return taskDao.getAllTasks()
+        return taskDao.getTasksForSubject(subjectId)
             .map { tasks -> tasks.filter { task -> task.isComplete } }
             .map { tasks -> sortTasks(tasks) }
     }
@@ -45,6 +45,7 @@ class TaskRepositoryImpl @Inject constructor(
     private fun sortTasks(tasks: List<Task>): List<Task> {
         return tasks
             .sortedWith(compareBy<Task> { task -> task.dueDate }
-                .thenByDescending { task -> task.priority })
+                .thenByDescending { task -> task.priority }
+            )
     }
 }

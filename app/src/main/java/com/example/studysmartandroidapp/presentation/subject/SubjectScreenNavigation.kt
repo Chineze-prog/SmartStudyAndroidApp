@@ -18,20 +18,18 @@ fun NavGraphBuilder.subjectScreen(navController: NavController){
                 type = NavType.IntType
                 defaultValue = -1
             }
-        )){backStackEntry ->
+        )
+    ){backStackEntry ->
         val args = SubjectScreenArgs.fromBundle(backStackEntry.arguments ?: Bundle())
         val subjectId = args.subjectId
-            //backStackEntry.arguments?.getString("subjectId")?.toIntOrNull() ?: run{
-            //if the subjectId is not a valid int the navigate back
+
+        //if the subjectId is not a valid int the navigate back
         if(subjectId == -1) {
             navController.popBackStack()
             return@composable
         }
 
-        SubjectScreenRoute(
-            navController = navController,
-            subjectId = subjectId
-        )
+        SubjectScreenRoute(navController = navController)
     }
 }
 

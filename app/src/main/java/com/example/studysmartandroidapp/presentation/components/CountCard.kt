@@ -32,13 +32,13 @@ fun CountCard(
                 .padding(horizontal = 4.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Text(
-                    text = headingText,
-                    style = MaterialTheme.typography.labelSmall
-                )
+        ){
+            Text(
+                text = headingText,
+                style = MaterialTheme.typography.labelSmall
+            )
 
-                Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = count,

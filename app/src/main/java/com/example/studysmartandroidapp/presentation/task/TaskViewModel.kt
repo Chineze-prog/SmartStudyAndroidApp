@@ -7,8 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.domain.repository.SubjectRepository
 import com.example.studysmartandroidapp.domain.repository.TaskRepository
+import com.example.studysmartandroidapp.utils.Priority
 import com.example.studysmartandroidapp.utils.SnackbarEvent
+import com.example.studysmartandroidapp.utils.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,13 +20,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.ZoneOffset
 import javax.inject.Inject
 
 
-// doesn't start with already saved values
-// when you go back from a task to a subject it goes th dashboard instead
+
 // doesn't automatically assign related subject even when it is added from a subject
 
 @HiltViewModel
@@ -53,9 +56,14 @@ class TaskViewModel @Inject constructor(
     private val _snackbarEventFlow = MutableSharedFlow<SnackbarEvent>()
     val snackbarEventFlow = _snackbarEventFlow.asSharedFlow()
 
+    init{
+        fetchTask()
+        fetchSubject()
+    }
+
     fun onEvent(event: TaskEvent){
         when(event){
-            TaskEvent.DeleteTask -> TODO()
+            TaskEvent.DeleteTask -> deleteTask()
 
             is TaskEvent.OnDateChange -> {
                 _state.update { taskState ->
@@ -101,6 +109,40 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    private fun deleteTask() {
+        viewModelScope.launch {
+            try {
+                val currentTaskId = state.value.currentTaskId
+
+                if(currentTaskId != null){
+                    withContext(Dispatchers.IO){
+                        taskRepository.deleteTask(taskId = currentTaskId)
+
+                    }
+
+                    _snackbarEventFlow.emit(
+                        SnackbarEvent.ShowSnackbar(message = "Task deleted successfully.")
+                    )
+
+                    _snackbarEventFlow.emit(SnackbarEvent.NavigateUp)
+                }
+                else{
+                    _snackbarEventFlow.emit(
+                        SnackbarEvent.ShowSnackbar(message = "No task to delete.")
+                    )
+                }
+            }
+            catch(e: Exception){
+                _snackbarEventFlow.emit(
+                    SnackbarEvent.ShowSnackbar(
+                        message = "Couldn't delete task.\n${e.message}",
+                        duration = SnackbarDuration.Long
+                    )
+                )
+            }
+        }
+    }
+
     private fun saveTask(){
         viewModelScope.launch {
             val state = _state.value
@@ -118,13 +160,14 @@ class TaskViewModel @Inject constructor(
             }
 
             try {
+                val currentDate = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
+                    .toEpochMilli()
+
                 taskRepository.upsertTask(
                     task = Task(
                         title = state.title,
                         description = state.description,
-                        dueDate = state.dueDate
-                            ?: LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
-                                .toEpochMilli(),
+                        dueDate = state.dueDate ?: currentDate,
                         relatedSubject = state.relatedToSubject,
                         priority = state.priority.value,
                         isComplete = state.isTaskComplete,
@@ -155,7 +198,37 @@ class TaskViewModel @Inject constructor(
 
     private fun fetchTask(){
         viewModelScope.launch {
+            if(currentTaskId != -1){
+                taskRepository.getTaskById(currentTaskId)?.let{ task ->
+                    _state.update { taskState ->
+                        taskState.copy(
+                            title = task.title,
+                            description = task.description,
+                            dueDate = task.dueDate,
+                            isTaskComplete = task.isComplete,
+                            relatedToSubject = task.relatedSubject,
+                            priority = Priority.fromInt(task.priority),
+                            subjectId = task.taskSubjectId,
+                            currentTaskId = task.taskId
+                        )
+                    }
+                }
+            }
+        }
+    }
 
+    private fun fetchSubject(){
+        viewModelScope.launch {
+            if(currentStudentId != -1){
+                subjectRepository.getSubjectById(currentStudentId)?.let{ subject ->
+                    _state.update { taskState ->
+                        taskState.copy(
+                            subjectId = subject.subjectId,
+                            relatedToSubject = subject.subjectName
+                        )
+                    }
+                }
+            }
         }
     }
 }

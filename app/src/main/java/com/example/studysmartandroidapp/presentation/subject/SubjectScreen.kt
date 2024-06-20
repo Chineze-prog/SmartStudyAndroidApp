@@ -52,17 +52,14 @@ import com.example.studysmartandroidapp.presentation.components.CountCard
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.presentation.components.tasksList
-import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.task.navigateToTask
-import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.utils.SnackbarEvent
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
 // states - are the values that can change
 @Composable
-fun SubjectScreenRoute(navController: NavController, subjectId: Int){
-    //val subject: Subject? = subjects.find{ it.subjectId == subjectId }
+fun SubjectScreenRoute(navController: NavController){
 
     val viewModel: SubjectViewModel = hiltViewModel()
 
@@ -73,8 +70,8 @@ fun SubjectScreenRoute(navController: NavController, subjectId: Int){
             state = state,
             onEvent = viewModel::onEvent,
             snackbarEvent = viewModel.snackbarEventFlow,
-            onTaskCardClick = {
-                navController.navigateToTask(taskId = it, subjectId = state.currentSubjectId)
+            onTaskCardClick = { taskId ->
+                navController.navigateToTask(taskId = taskId, subjectId = state.currentSubjectId)
             },
             onAddTaskClick = {
                 navController.navigateToTask(taskId = null, subjectId = state.currentSubjectId)

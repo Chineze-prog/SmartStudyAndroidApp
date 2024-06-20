@@ -22,10 +22,7 @@ enum class Priority(val title: String, val color: Color, val value: Int){
 
 fun Long?.changeMillisToDateString(): String{
     val date: LocalDate = this?.let{ millis ->
-        Instant
-            .ofEpochMilli(millis)
-            .atZone(ZoneOffset.UTC)
-            .toLocalDate()
+        Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
     } ?: LocalDate.now()
 
     return date.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))

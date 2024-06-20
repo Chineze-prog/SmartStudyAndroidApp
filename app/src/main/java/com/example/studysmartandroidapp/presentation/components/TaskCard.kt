@@ -20,9 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.utils.Priority
 import com.example.studysmartandroidapp.utils.changeMillisToDateString
-import com.example.studysmartandroidapp.utils.toLocalDate
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 @Composable
 fun TaskCard(
@@ -60,15 +57,6 @@ fun TaskCard(
 
                 Text(
                     text = task.dueDate.changeMillisToDateString(),
-                    /*
-                    if(task.dueDate.toLocalDate() <
-                        LocalDate.now().atStartOfDay(ZoneOffset.UTC)
-                            .toInstant().toEpochMilli().toLocalDate()){
-                        LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-                            .changeMillisToDateString()
-                    }
-                    else{ task.dueDate.changeMillisToDateString() },
-                     */
                     style = MaterialTheme.typography.bodySmall
                 )
             }

@@ -7,8 +7,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.studysmartandroidapp.presentation.subject.SubjectScreenArgs
-import com.example.studysmartandroidapp.presentation.subject.SubjectScreenRoute
 
 private const val taskScreenRoute = "task?subjectId={subjectId}&taskId={taskId}"
 
@@ -30,20 +28,16 @@ fun NavGraphBuilder.taskScreen(navController: NavController){
         val subjectId = args.subjectId
         val taskId = args.taskId
 
-        /*
-        if (subjectId == null) {
+        if (taskId == -1) {
             navController.popBackStack()
             return@composable
         }
-         */
 
         TaskScreenRoute(
             navController = navController,
-            subjectId = subjectId,//backStackEntry.arguments?.getString("subjectId")?.toInt(),
-            taskId = taskId//backStackEntry.arguments?.getString("taskId")?.toInt()
+            subjectId = subjectId
         )
     }
-
 }
 
 fun NavController.navigateToTask(subjectId: Int?, taskId: Int?){
