@@ -1,6 +1,7 @@
 package com.example.studysmartandroidapp.presentation.task
 
 import androidx.compose.material3.SnackbarDuration
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.studysmartandroidapp.domain.model.Task
@@ -27,9 +28,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TaskViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val subjectRepository: SubjectRepository,
     private val taskRepository: TaskRepository
 ): ViewModel() {
+    private val currentStudentId: Int = savedStateHandle["subjectId"] ?: -1
+
+    private val currentTaskId: Int = savedStateHandle["taskId"] ?: -1
+
     private val _state = MutableStateFlow(TaskState())
 
     val state = combine(
@@ -144,6 +150,12 @@ class TaskViewModel @Inject constructor(
                     )
                 )
             }
+        }
+    }
+
+    private fun fetchTask(){
+        viewModelScope.launch {
+
         }
     }
 }

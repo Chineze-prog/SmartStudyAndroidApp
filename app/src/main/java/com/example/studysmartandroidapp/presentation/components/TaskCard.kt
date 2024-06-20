@@ -59,7 +59,8 @@ fun TaskCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text =
+                    text = task.dueDate.changeMillisToDateString(),
+                    /*
                     if(task.dueDate.toLocalDate() <
                         LocalDate.now().atStartOfDay(ZoneOffset.UTC)
                             .toInstant().toEpochMilli().toLocalDate()){
@@ -67,6 +68,7 @@ fun TaskCard(
                             .changeMillisToDateString()
                     }
                     else{ task.dueDate.changeMillisToDateString() },
+                     */
                     style = MaterialTheme.typography.bodySmall
                 )
             }
