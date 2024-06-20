@@ -4,7 +4,6 @@ import androidx.compose.ui.graphics.Color
 import com.example.studysmartandroidapp.domain.model.Session
 import com.example.studysmartandroidapp.domain.model.Subject
 
-
 // states are the values that can change while a user is using the app
 
 data class DashboardState(

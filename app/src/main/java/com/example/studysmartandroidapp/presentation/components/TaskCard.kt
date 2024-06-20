@@ -27,12 +27,10 @@ fun TaskCard(
     task: Task,
     onCheckBoxClick: () -> Unit,
     onClick: () -> Unit
-){
-    ElevatedCard(modifier = modifier.clickable{ onClick() }) {
+) {
+    ElevatedCard(modifier = modifier.clickable { onClick() }) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TaskCheckBox(
@@ -49,8 +47,10 @@ fun TaskCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleMedium,
-                    textDecoration = if (task.isComplete){ TextDecoration.LineThrough }
-                    else TextDecoration.None
+                    textDecoration =
+                        if (task.isComplete) {
+                            TextDecoration.LineThrough
+                        } else TextDecoration.None
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))

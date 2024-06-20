@@ -17,21 +17,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TaskCheckBox(
-    isComplete: Boolean,
-    borderColor: Color,
-    onCheckBoxClick: () -> Unit
-){
+fun TaskCheckBox(isComplete: Boolean, borderColor: Color, onCheckBoxClick: () -> Unit) {
     Box(
-        modifier = Modifier
-            .size(25.dp)
-            .clip(CircleShape)
-            .border(2.dp, borderColor, CircleShape)
-            .clickable{ onCheckBoxClick() },
+        modifier =
+            Modifier.size(25.dp)
+                .clip(CircleShape)
+                .border(2.dp, borderColor, CircleShape)
+                .clickable { onCheckBoxClick() },
         contentAlignment = Alignment.Center
-    ){
-        //crosses out the task when its complete
-        AnimatedVisibility(visible = isComplete){
+    ) {
+        // crosses out the task when its complete
+        AnimatedVisibility(visible = isComplete) {
             Icon(
                 modifier = Modifier.size(20.dp),
                 imageVector = Icons.Rounded.Check,

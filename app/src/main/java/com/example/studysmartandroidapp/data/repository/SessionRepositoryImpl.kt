@@ -3,13 +3,12 @@ package com.example.studysmartandroidapp.data.repository
 import com.example.studysmartandroidapp.data.local.SessionDao
 import com.example.studysmartandroidapp.domain.model.Session
 import com.example.studysmartandroidapp.domain.repository.SessionRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
-class SessionRepositoryImpl @Inject constructor(
-    private val sessionDao: SessionDao
-):SessionRepository {
+class SessionRepositoryImpl @Inject constructor(private val sessionDao: SessionDao) :
+    SessionRepository {
     override suspend fun insertSession(session: Session) {
         sessionDao.insertSession(session)
     }

@@ -25,8 +25,8 @@ fun LazyListScope.studySessionsList(
     sessions: List<Session>,
     emptyListText: String,
     onDeleteIconClick: (Session) -> Unit
-){
-    item{
+) {
+    item {
         Text(
             text = sectionTitle,
             style = MaterialTheme.typography.bodySmall,
@@ -34,17 +34,15 @@ fun LazyListScope.studySessionsList(
         )
     }
 
-    //if the sessions list is empty, show a stock image
-    if(sessions.isEmpty()){
-        item{
+    // if the sessions list is empty, show a stock image
+    if (sessions.isEmpty()) {
+        item {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 Image(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .align(Alignment.CenterHorizontally),
+                    modifier = Modifier.size(120.dp).align(Alignment.CenterHorizontally),
                     painter = painterResource(R.drawable.img_lamp),
                     contentDescription = emptyListText
                 )
@@ -61,7 +59,7 @@ fun LazyListScope.studySessionsList(
         }
     }
 
-    items(sessions){session ->
+    items(sessions) { session ->
         StudySessionCard(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             session = session,
@@ -69,4 +67,3 @@ fun LazyListScope.studySessionsList(
         )
     }
 }
-

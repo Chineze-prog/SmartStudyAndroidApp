@@ -31,8 +31,8 @@ fun SubjectListBottomSheet(
     buttonSheetTitle: String = "Related to Subject",
     onSubjectClick: (Subject) -> Unit,
     onDismissRequest: () -> Unit
-){
-    if(isOpen) {
+) {
+    if (isOpen) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = onDismissRequest,
@@ -51,9 +51,7 @@ fun SubjectListBottomSheet(
                 }
             }
         ) {
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp)
-            ) {
+            LazyColumn(contentPadding = PaddingValues(16.dp)) {
                 if (subjects.isEmpty()) {
                     item {
                         Text(
@@ -65,24 +63,17 @@ fun SubjectListBottomSheet(
 
                 items(subjects) { subject ->
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .clickable { onSubjectClick(subject) }
+                        modifier =
+                            Modifier.fillMaxWidth().padding(8.dp).clickable {
+                                onSubjectClick(subject)
+                            }
                     ) {
                         Text(text = subject.subjectName)
                     }
-
                 }
 
-                //for space at the bottom of the list
-                item{
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(15.dp)
-                    )
-                }
+                // for space at the bottom of the list
+                item { Box(modifier = Modifier.fillMaxWidth().padding(15.dp)) }
             }
         }
     }

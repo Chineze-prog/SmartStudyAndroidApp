@@ -26,8 +26,8 @@ fun LazyListScope.tasksList(
     emptyListText: String,
     onTaskCardClick: (Int?) -> Unit,
     onCheckBoxClick: (Task) -> Unit
-){
-    item{
+) {
+    item {
         Text(
             text = sectionTitle,
             style = MaterialTheme.typography.bodySmall,
@@ -35,17 +35,15 @@ fun LazyListScope.tasksList(
         )
     }
 
-    //if the taskList is empty show an stock image
-    if(tasks.isEmpty()){
-        item{
+    // if the taskList is empty show an stock image
+    if (tasks.isEmpty()) {
+        item {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 Image(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .align(Alignment.CenterHorizontally),
+                    modifier = Modifier.size(120.dp).align(Alignment.CenterHorizontally),
                     painter = painterResource(R.drawable.img_tasks),
                     contentDescription = emptyListText
                 )
@@ -62,7 +60,7 @@ fun LazyListScope.tasksList(
         }
     }
 
-    items(tasks){task ->
+    items(tasks) { task ->
         TaskCard(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             task = task,
@@ -71,4 +69,3 @@ fun LazyListScope.tasksList(
         )
     }
 }
-

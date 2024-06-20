@@ -10,20 +10,21 @@ import androidx.navigation.navArgument
 
 private const val taskScreenRoute = "task?subjectId={subjectId}&taskId={taskId}"
 
-fun NavGraphBuilder.taskScreen(navController: NavController){
+fun NavGraphBuilder.taskScreen(navController: NavController) {
     composable(
         route = taskScreenRoute,
-        arguments = listOf(
-            navArgument("subjectId"){
-                type = NavType.IntType
-                defaultValue = -1
-            },
-            navArgument("taskId"){
-                type = NavType.IntType
-                defaultValue = -1
-            }
-        )
-    ){backStackEntry ->
+        arguments =
+            listOf(
+                navArgument("subjectId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                },
+                navArgument("taskId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+    ) { backStackEntry ->
         val args = TaskScreenArgs.fromBundle(backStackEntry.arguments ?: Bundle())
         val subjectId = args.subjectId
         val taskId = args.taskId
@@ -33,26 +34,23 @@ fun NavGraphBuilder.taskScreen(navController: NavController){
             return@composable
         }
 
-        TaskScreenRoute(
-            navController = navController,
-            subjectId = subjectId
-        )
+        TaskScreenRoute(navController = navController, subjectId = subjectId)
     }
 }
 
-fun NavController.navigateToTask(subjectId: Int?, taskId: Int?){
+fun NavController.navigateToTask(subjectId: Int?, taskId: Int?) {
     val route = buildString {
         append("task?")
 
-        if(subjectId != null){
+        if (subjectId != null) {
             append("subjectId=$subjectId")
 
-            if(taskId != null){
+            if (taskId != null) {
                 append("&")
             }
         }
 
-        if(taskId != null){
+        if (taskId != null) {
             append("taskId=$taskId")
         }
     }
@@ -60,10 +58,10 @@ fun NavController.navigateToTask(subjectId: Int?, taskId: Int?){
     this.navigate(route)
 }
 
-data class TaskScreenArgs(val subjectId: Int?, val taskId: Int?): NavArgs {
-    companion object{
+data class TaskScreenArgs(val subjectId: Int?, val taskId: Int?) : NavArgs {
+    companion object {
         @JvmStatic
-        fun fromBundle(bundle: Bundle): TaskScreenArgs{
+        fun fromBundle(bundle: Bundle): TaskScreenArgs {
             return TaskScreenArgs(
                 subjectId = bundle.getInt("subjectId").takeIf { it != -1 },
                 taskId = bundle.getInt("taskId").takeIf { it != -1 }

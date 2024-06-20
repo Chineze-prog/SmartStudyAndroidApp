@@ -44,38 +44,33 @@ import com.example.studysmartandroidapp.subjects
 import kotlinx.coroutines.launch
 
 @Composable
-fun SessionScreenRoute(navController: NavController){
+fun SessionScreenRoute(navController: NavController) {
     val viewModel: SessionViewModel = hiltViewModel()
 
-    SessionScreen(
-        onBackButtonClick = { navController.navigate("dashboard") }
-    )
+    SessionScreen(onBackButtonClick = { navController.navigate("dashboard") })
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SessionScreen(
-    onBackButtonClick: () -> Unit
-){
+private fun SessionScreen(onBackButtonClick: () -> Unit) {
     var relatedSubject by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState()
-    var isBottomSheetOpen by remember{ mutableStateOf(false) }
+    var isBottomSheetOpen by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    var isDeleteSessionDialogueOpen by remember{ mutableStateOf(false) }
-
+    var isDeleteSessionDialogueOpen by remember { mutableStateOf(false) }
 
     SubjectListBottomSheet(
         sheetState = sheetState,
         isOpen = isBottomSheetOpen,
         subjects = subjects,
-        //how to dismiss a bottom sheet if not through the onDismissRequest
+        // how to dismiss a bottom sheet if not through the onDismissRequest
         onSubjectClick = {
-            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                if(!sheetState.isVisible) isBottomSheetOpen = false
-            }
+            scope
+                .launch { sheetState.hide() }
+                .invokeOnCompletion { if (!sheetState.isVisible) isBottomSheetOpen = false }
             relatedSubject = it.subjectName
         },
-        onDismissRequest = { isBottomSheetOpen = false}
+        onDismissRequest = { isBottomSheetOpen = false }
     )
 
     DeleteDialogue(
@@ -86,32 +81,21 @@ private fun SessionScreen(
         onConfirmButtonClick = { isDeleteSessionDialogueOpen = false }
     )
 
-    Scaffold (
-        topBar = {
-            SessionScreenTopBar( onBackButtonClick = onBackButtonClick )
-        }
-    ){ paddingValue ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValue)
-        ) {
-            //timer
-            item{
+    Scaffold(topBar = { SessionScreenTopBar(onBackButtonClick = onBackButtonClick) }) { paddingValue
+        ->
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(paddingValue)) {
+            // timer
+            item {
                 TimerSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                    //makes the height of the timer section to be whatever is the
+                    modifier = Modifier.fillMaxWidth().aspectRatio(1f)
+                    // makes the height of the timer section to be whatever is the
                     // width of that section, so the ratio is 1:1
                 )
             }
 
-            item{
+            item {
                 RelatedSubjects(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                     relatedSubject = relatedSubject,
                     selectSubjectButtonClick = { isBottomSheetOpen = true }
                 )
@@ -119,22 +103,21 @@ private fun SessionScreen(
 
             item {
                 ButtonsSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
-                    onStartButtonClick = { /*TODO*/ },
-                    onCancelButtonClick = { /*TODO*/ },
-                    onFinishButtonClick = {  }
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                    onStartButtonClick = { /*TODO*/},
+                    onCancelButtonClick = { /*TODO*/},
+                    onFinishButtonClick = {}
                 )
             }
 
             studySessionsList(
                 sectionTitle = "STUDY SESSIONS HISTORY",
-                //sessions = emptyList(),
+                // sessions = emptyList(),
                 sessions = sessions,
-                emptyListText = "You don't have any recent study sessions.\n Start a study " +
+                emptyListText =
+                    "You don't have any recent study sessions.\n Start a study " +
                         "session to begin recording your progress.\n",
-                onDeleteIconClick = { isDeleteSessionDialogueOpen = true}
+                onDeleteIconClick = { isDeleteSessionDialogueOpen = true }
             )
         }
     }
@@ -142,61 +125,44 @@ private fun SessionScreen(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SessionScreenTopBar(
-    onBackButtonClick: () -> Unit
-){
+private fun SessionScreenTopBar(onBackButtonClick: () -> Unit) {
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = onBackButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Navigate Back")
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Navigate Back")
             }
         },
-        title = {
-            Text(
-                text = "Study Session",
-                style = MaterialTheme.typography.headlineSmall
-            )
-        }
+        title = { Text(text = "Study Session", style = MaterialTheme.typography.headlineSmall) }
     )
 }
 
 @Composable
-private fun TimerSection(
-    modifier: Modifier
-){
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
+private fun TimerSection(modifier: Modifier) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Box(
-            modifier = Modifier
-                .size(250.dp)
-                .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+            modifier =
+                Modifier.size(250.dp)
+                    .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
         )
-            /*
-            //constant progress bar, remains the same(background)
-            CircularProgressIndicator(
-                modifier = Modifier.fillMaxSize(),
-                progress = 1f,
-                strokeWidth = 4.dp,
-                strokeCap = StrokeCap.Round,
-                color = MaterialTheme.colorScheme.surfaceVariant
-            )
+        /*
+        //constant progress bar, remains the same(background)
+        CircularProgressIndicator(
+            modifier = Modifier.fillMaxSize(),
+            progress = 1f,
+            strokeWidth = 4.dp,
+            strokeCap = StrokeCap.Round,
+            color = MaterialTheme.colorScheme.surfaceVariant
+        )
 
-            //progress bar that moves (tracks actual progress)
-            CircularProgressIndicator(
-                modifier = Modifier.fillMaxSize(),
-                //progress = progress,
-                strokeWidth = 4.dp,
-                strokeCap = StrokeCap.Round
-            )
-            */
-        Text(
-            text = "00:00:00",
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp)
+        //progress bar that moves (tracks actual progress)
+        CircularProgressIndicator(
+            modifier = Modifier.fillMaxSize(),
+            //progress = progress,
+            strokeWidth = 4.dp,
+            strokeCap = StrokeCap.Round
         )
+        */
+        Text(text = "00:00:00", style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp))
     }
 }
 
@@ -205,24 +171,18 @@ private fun RelatedSubjects(
     modifier: Modifier,
     relatedSubject: String,
     selectSubjectButtonClick: () -> Unit
-){
+) {
     Column(modifier = modifier) {
-        Text(
-            text = "Related to subject",
-            style = MaterialTheme.typography.bodySmall
-        )
+        Text(text = "Related to subject", style = MaterialTheme.typography.bodySmall)
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = relatedSubject,
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Text(text = relatedSubject, style = MaterialTheme.typography.bodyLarge)
 
-            IconButton(onClick = selectSubjectButtonClick ) {
+            IconButton(onClick = selectSubjectButtonClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Select related subject"
@@ -236,33 +196,24 @@ private fun RelatedSubjects(
 private fun ButtonsSection(
     modifier: Modifier,
     onStartButtonClick: () -> Unit,
-    //onStopButtonClick: () -> Unit,
+    // onStopButtonClick: () -> Unit,
     onCancelButtonClick: () -> Unit,
     onFinishButtonClick: () -> Unit,
-){
+) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Button(onClick = onCancelButtonClick) {
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                text = "Cancel"
-            )
+            Text(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp), text = "Cancel")
         }
 
         Button(onClick = onStartButtonClick) {
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                text = "Start"
-            )
+            Text(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp), text = "Start")
         }
 
         Button(onClick = onFinishButtonClick) {
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                text = "Finish"
-            )
+            Text(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp), text = "Finish")
         }
     }
 }

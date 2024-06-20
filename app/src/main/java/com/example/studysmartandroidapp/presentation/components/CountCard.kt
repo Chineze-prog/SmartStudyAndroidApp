@@ -20,30 +20,21 @@ creates a card to display certain info like headingText = Subject Count and coun
  */
 
 @Composable
-fun CountCard(
-    modifier: Modifier,
-    headingText: String,
-    count: String
-){
+fun CountCard(modifier: Modifier, headingText: String, count: String) {
     ElevatedCard(modifier = modifier) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp, vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Text(
-                text = headingText,
-                style = MaterialTheme.typography.labelSmall
-            )
+        ) {
+            Text(text = headingText, style = MaterialTheme.typography.labelSmall)
 
             Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = count,
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 30.sp)
-                //copies all the info and changes just the fontSize
+                // copies all the info and changes just the fontSize
             )
         }
     }

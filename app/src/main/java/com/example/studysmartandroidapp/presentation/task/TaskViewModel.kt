@@ -9,8 +9,10 @@ import com.example.studysmartandroidapp.domain.repository.SubjectRepository
 import com.example.studysmartandroidapp.domain.repository.TaskRepository
 import com.example.studysmartandroidapp.utils.Priority
 import com.example.studysmartandroidapp.utils.SnackbarEvent
-import com.example.studysmartandroidapp.utils.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import java.time.ZoneOffset
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,75 +23,60 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import java.time.ZoneOffset
-import javax.inject.Inject
-
-
 
 // doesn't automatically assign related subject even when it is added from a subject
 
 @HiltViewModel
-class TaskViewModel @Inject constructor(
+class TaskViewModel
+@Inject
+constructor(
     savedStateHandle: SavedStateHandle,
     private val subjectRepository: SubjectRepository,
     private val taskRepository: TaskRepository
-): ViewModel() {
+) : ViewModel() {
     private val currentStudentId: Int = savedStateHandle["subjectId"] ?: -1
 
     private val currentTaskId: Int = savedStateHandle["taskId"] ?: -1
 
     private val _state = MutableStateFlow(TaskState())
 
-    val state = combine(
-        _state,
-        subjectRepository.getAllSubjects()
-    ){ state, subjects ->
-        state.copy(subjects = subjects)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-        initialValue = TaskState()
-    )
+    val state =
+        combine(_state, subjectRepository.getAllSubjects()) { state, subjects ->
+                state.copy(subjects = subjects)
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                initialValue = TaskState()
+            )
 
-    //we're using mutable shared flow because it doesn't hold any initial values
+    // we're using mutable shared flow because it doesn't hold any initial values
     private val _snackbarEventFlow = MutableSharedFlow<SnackbarEvent>()
     val snackbarEventFlow = _snackbarEventFlow.asSharedFlow()
 
-    init{
+    init {
         fetchTask()
         fetchSubject()
     }
 
-    fun onEvent(event: TaskEvent){
-        when(event){
+    fun onEvent(event: TaskEvent) {
+        when (event) {
             TaskEvent.DeleteTask -> deleteTask()
-
             is TaskEvent.OnDateChange -> {
-                _state.update { taskState ->
-                    taskState.copy(dueDate = event.millis)
-                }
+                _state.update { taskState -> taskState.copy(dueDate = event.millis) }
             }
-
             is TaskEvent.OnDescriptionChange -> {
-                _state.update { taskState ->
-                    taskState.copy(description = event.description)
-                }
+                _state.update { taskState -> taskState.copy(description = event.description) }
             }
-
             TaskEvent.OnIsCompleteChange -> {
-                //should det to the opposite of the original status
+                // should det to the opposite of the original status
                 _state.update { taskState ->
                     taskState.copy(isTaskComplete = !_state.value.isTaskComplete)
                 }
             }
-
             is TaskEvent.OnPriorityChange -> {
-                _state.update { taskState ->
-                    taskState.copy(priority = event.priority)
-                }
+                _state.update { taskState -> taskState.copy(priority = event.priority) }
             }
-
             is TaskEvent.OnRelatedSubjectSelect -> {
                 _state.update { taskState ->
                     taskState.copy(
@@ -98,13 +85,9 @@ class TaskViewModel @Inject constructor(
                     )
                 }
             }
-
             is TaskEvent.OnTitleChange -> {
-                _state.update { taskState ->
-                    taskState.copy(title = event.title)
-                }
+                _state.update { taskState -> taskState.copy(title = event.title) }
             }
-
             TaskEvent.SaveTask -> saveTask()
         }
     }
@@ -114,10 +97,9 @@ class TaskViewModel @Inject constructor(
             try {
                 val currentTaskId = state.value.currentTaskId
 
-                if(currentTaskId != null){
-                    withContext(Dispatchers.IO){
+                if (currentTaskId != null) {
+                    withContext(Dispatchers.IO) {
                         taskRepository.deleteTask(taskId = currentTaskId)
-
                     }
 
                     _snackbarEventFlow.emit(
@@ -125,14 +107,12 @@ class TaskViewModel @Inject constructor(
                     )
 
                     _snackbarEventFlow.emit(SnackbarEvent.NavigateUp)
-                }
-                else{
+                } else {
                     _snackbarEventFlow.emit(
                         SnackbarEvent.ShowSnackbar(message = "No task to delete.")
                     )
                 }
-            }
-            catch(e: Exception){
+            } catch (e: Exception) {
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
                         message = "Couldn't delete task.\n${e.message}",
@@ -143,12 +123,12 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    private fun saveTask(){
+    private fun saveTask() {
         viewModelScope.launch {
             val state = _state.value
 
-            if(state.subjectId == null || state.relatedToSubject == null){
-                //else display error message
+            if (state.subjectId == null || state.relatedToSubject == null) {
+                // else display error message
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
                         message = "Please select the subject related to task.",
@@ -160,32 +140,30 @@ class TaskViewModel @Inject constructor(
             }
 
             try {
-                val currentDate = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
-                    .toEpochMilli()
+                val currentDate =
+                    LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
                 taskRepository.upsertTask(
-                    task = Task(
-                        title = state.title,
-                        description = state.description,
-                        dueDate = state.dueDate ?: currentDate,
-                        relatedSubject = state.relatedToSubject,
-                        priority = state.priority.value,
-                        isComplete = state.isTaskComplete,
-                        taskSubjectId = state.subjectId,
-                        taskId = state.currentTaskId
-                    )
+                    task =
+                        Task(
+                            title = state.title,
+                            description = state.description,
+                            dueDate = state.dueDate ?: currentDate,
+                            relatedSubject = state.relatedToSubject,
+                            priority = state.priority.value,
+                            isComplete = state.isTaskComplete,
+                            taskSubjectId = state.subjectId,
+                            taskId = state.currentTaskId
+                        )
                 )
 
-                //if successful display success message
-                _snackbarEventFlow.emit(
-                    SnackbarEvent.ShowSnackbar("Task saved successfully.")
-                )
+                // if successful display success message
+                _snackbarEventFlow.emit(SnackbarEvent.ShowSnackbar("Task saved successfully."))
 
-                //if successful display success message
+                // if successful display success message
                 _snackbarEventFlow.emit(SnackbarEvent.NavigateUp)
-            }
-            catch(e: Exception){
-                //else display error message
+            } catch (e: Exception) {
+                // else display error message
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
                         message = "Couldn't save task.\n ${e.message}",
@@ -196,10 +174,10 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    private fun fetchTask(){
+    private fun fetchTask() {
         viewModelScope.launch {
-            if(currentTaskId != -1){
-                taskRepository.getTaskById(currentTaskId)?.let{ task ->
+            if (currentTaskId != -1) {
+                taskRepository.getTaskById(currentTaskId)?.let { task ->
                     _state.update { taskState ->
                         taskState.copy(
                             title = task.title,
@@ -217,10 +195,10 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    private fun fetchSubject(){
+    private fun fetchSubject() {
         viewModelScope.launch {
-            if(currentStudentId != -1){
-                subjectRepository.getSubjectById(currentStudentId)?.let{ subject ->
+            if (currentStudentId != -1) {
+                subjectRepository.getSubjectById(currentStudentId)?.let { subject ->
                     _state.update { taskState ->
                         taskState.copy(
                             subjectId = subject.subjectId,

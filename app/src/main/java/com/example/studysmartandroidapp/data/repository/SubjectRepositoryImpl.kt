@@ -5,14 +5,16 @@ import com.example.studysmartandroidapp.data.local.SubjectDao
 import com.example.studysmartandroidapp.data.local.TaskDao
 import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.domain.repository.SubjectRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
-class SubjectRepositoryImpl @Inject constructor(
+class SubjectRepositoryImpl
+@Inject
+constructor(
     private val subjectDao: SubjectDao,
     private val taskDao: TaskDao,
     private val sessionDao: SessionDao
-): SubjectRepository {
+) : SubjectRepository {
     override suspend fun upsertSubject(subject: Subject) {
         subjectDao.upsertSubject(subject)
     }

@@ -25,19 +25,13 @@ object DatabaseModule {
     // used to specify the scope of the provided dependency
     // it makes sure there will be only 1 instance of the provided object throughout the application
     @Singleton
-    fun provideDatabase(application: Application): AppDatabase{
-        return Room
-            .databaseBuilder(
-            application,
-            AppDatabase::class.java,
-            "studysmart.db"
-            )
-            .build()
+    fun provideDatabase(application: Application): AppDatabase {
+        return Room.databaseBuilder(application, AppDatabase::class.java, "studysmart.db").build()
     }
 
     @Provides
     @Singleton
-    fun provideSubjectDao(database: AppDatabase): SubjectDao{
+    fun provideSubjectDao(database: AppDatabase): SubjectDao {
         return database.subjectDao()
     }
 
@@ -49,7 +43,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideSessionDao(database: AppDatabase): SessionDao{
+    fun provideSessionDao(database: AppDatabase): SessionDao {
         return database.sessionDao()
     }
 }

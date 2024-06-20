@@ -43,50 +43,51 @@ fun AddSubjectDialogue(
     onColorChange: (List<Color>) -> Unit,
     onSubjectNameChange: (String) -> Unit,
     onGoalStudyHoursChange: (String) -> Unit
-){
-    var subjectNameError by rememberSaveable { mutableStateOf <String?> (null) }
+) {
+    var subjectNameError by rememberSaveable { mutableStateOf<String?>(null) }
 
-    subjectNameError = when{
-        subjectName.isBlank() -> "Please enter subject name."
-        subjectName.length < 2 -> "Subject Name is too short."
-        subjectName.length > 20 -> "Subject Name is too long."
-        else -> null
-    }
+    subjectNameError =
+        when {
+            subjectName.isBlank() -> "Please enter subject name."
+            subjectName.length < 2 -> "Subject Name is too short."
+            subjectName.length > 20 -> "Subject Name is too long."
+            else -> null
+        }
 
-    var goalStudyHoursError by rememberSaveable { mutableStateOf <String?> (null) }
+    var goalStudyHoursError by rememberSaveable { mutableStateOf<String?>(null) }
 
-    goalStudyHoursError = when{
-        goalStudyHours.isBlank() -> "Please enter goal study hours."
-        goalStudyHours.toFloatOrNull() == null -> "Invalid number."
-        goalStudyHours.toFloat() < 1f -> "Please set to at least 1 hour."
-        goalStudyHours.toFloat() > 1000f -> "Please set a maximum of 1000 hours."
-        else -> null
-    }
+    goalStudyHoursError =
+        when {
+            goalStudyHours.isBlank() -> "Please enter goal study hours."
+            goalStudyHours.toFloatOrNull() == null -> "Invalid number."
+            goalStudyHours.toFloat() < 1f -> "Please set to at least 1 hour."
+            goalStudyHours.toFloat() > 1000f -> "Please set a maximum of 1000 hours."
+            else -> null
+        }
 
-    if(isOpen) {
+    if (isOpen) {
         AlertDialog(
             title = { Text(text = title) },
             text = {
-                Column{
+                Column {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                         horizontalArrangement = Arrangement.SpaceAround
-                    ){
-                        Subject.subjectCardColors.forEach{ color ->
+                    ) {
+                        Subject.subjectCardColors.forEach { color ->
                             Box(
-                                modifier = Modifier
-                                    .clickable { onColorChange(color) }
-                                    .size(24.dp)
-                                    .clip(CircleShape)
-                                    .border(
-                                        width = 2.dp,
-                                        color = if (color == selectedColors) Color.Black
-                                        else Color.Transparent,
-                                        shape = CircleShape
-                                    )
-                                    .background(brush = Brush.horizontalGradient(color))
+                                modifier =
+                                    Modifier.clickable { onColorChange(color) }
+                                        .size(24.dp)
+                                        .clip(CircleShape)
+                                        .border(
+                                            width = 2.dp,
+                                            color =
+                                                if (color == selectedColors) Color.Black
+                                                else Color.Transparent,
+                                            shape = CircleShape
+                                        )
+                                        .background(brush = Brush.horizontalGradient(color))
                             )
                         }
                     }
@@ -122,11 +123,7 @@ fun AddSubjectDialogue(
                     Text(text = "Save")
                 }
             },
-            dismissButton = {
-                TextButton(onClick = onDismissRequest) {
-                    Text(text = "Cancel")
-                }
-            }
+            dismissButton = { TextButton(onClick = onDismissRequest) { Text(text = "Cancel") } }
         )
     }
 }

@@ -40,27 +40,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.studysmartandroidapp.R
+import com.example.studysmartandroidapp.domain.model.Session
+import com.example.studysmartandroidapp.domain.model.Subject
+import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.presentation.components.AddSubjectDialogue
 import com.example.studysmartandroidapp.presentation.components.CountCard
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.SubjectCard
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.presentation.components.tasksList
-import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
 import com.example.studysmartandroidapp.presentation.task.navigateToTask
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.studysmartandroidapp.domain.model.Session
-import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.utils.SnackbarEvent
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun DashboardScreenRoute(navController: NavController){
+fun DashboardScreenRoute(navController: NavController) {
     val viewModel: DashboardViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
@@ -92,24 +92,23 @@ private fun DashboardScreen(
     onStartSessionButtonClick: () -> Unit,
     onSubjectCardClick: (Int?) -> Unit,
     onTaskCardClick: (Int?) -> Unit
-){
+) {
     var isAddSubjectDialogueOpen by rememberSaveable { mutableStateOf(false) }
 
     var isDeleteSessionDialogueOpen by rememberSaveable { mutableStateOf(false) }
 
-    //snackbar host state
+    // snackbar host state
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
         snackbarEvent.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is SnackbarEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
                         message = event.message,
                         duration = event.duration
                     )
                 }
-
                 SnackbarEvent.NavigateUp -> {}
             }
         }
@@ -127,13 +126,16 @@ private fun DashboardScreen(
         },
         onColorChange = { newColor -> onEvent(DashboardEvent.OnSubjectCardColorChange(newColor)) },
         onSubjectNameChange = { newName -> onEvent(DashboardEvent.OnSubjectNameChange(newName)) },
-        onGoalStudyHoursChange = { newGsh -> onEvent(DashboardEvent.OnGoalStudyHoursChange(newGsh)) }
+        onGoalStudyHoursChange = { newGsh ->
+            onEvent(DashboardEvent.OnGoalStudyHoursChange(newGsh))
+        }
     )
 
     DeleteDialogue(
         isOpen = isDeleteSessionDialogueOpen,
         title = "Delete Session?",
-        bodyText = "Are you sure you want to delete this session?\nYour studied hours will be " +
+        bodyText =
+            "Are you sure you want to delete this session?\nYour studied hours will be " +
                 "reduced by this session's time.\nTHIS ACTION CANNOT BE UNDONE.",
         onDismissRequest = { isDeleteSessionDialogueOpen = false },
         onConfirmButtonClick = {
@@ -146,23 +148,17 @@ private fun DashboardScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = { DashboardScreenTopBar() }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            item { //count cards
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            item { // count cards
                 CountCardsSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
                     subjectCount = state.totalSubjectCount,
                     studiedHours = state.totalStudiedHours.toString(),
                     goalStudyHours = state.totalGoalStudyHours.toString()
                 )
             }
 
-            item{//subject cards
+            item { // subject cards
                 SubjectCardsSection(
                     modifier = Modifier.fillMaxWidth(),
                     subjectsList = state.subjects,
@@ -171,11 +167,10 @@ private fun DashboardScreen(
                 )
             }
 
-            item{// start study session button
+            item { // start study session button
                 Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 48.dp, vertical = 20.dp),
+                    modifier =
+                        Modifier.fillMaxWidth().padding(horizontal = 48.dp, vertical = 20.dp),
                     onClick = onStartSessionButtonClick
                 ) {
                     Text(text = "Start Study Session")
@@ -185,22 +180,22 @@ private fun DashboardScreen(
             tasksList(
                 sectionTitle = "UPCOMING TASKS",
                 tasks = tasks,
-                emptyListText = "You don't have any upcoming tasks.\n Click the + button in the" +
+                emptyListText =
+                    "You don't have any upcoming tasks.\n Click the + button in the" +
                         " subject screen to add a new task.",
                 onTaskCardClick = onTaskCardClick,
-                onCheckBoxClick = {
-                    newStatus -> onEvent(DashboardEvent.OnTaskIsCompleteChange(newStatus))
+                onCheckBoxClick = { newStatus ->
+                    onEvent(DashboardEvent.OnTaskIsCompleteChange(newStatus))
                 }
             )
 
-            item{
-                Spacer(modifier = Modifier.height(20.dp))
-            }
+            item { Spacer(modifier = Modifier.height(20.dp)) }
 
             studySessionsList(
                 sectionTitle = "RECENT STUDY SESSIONS",
                 sessions = recentSessions,
-                emptyListText = "You don't have any recent study sessions.\n Start a study " +
+                emptyListText =
+                    "You don't have any recent study sessions.\n Start a study " +
                         "session to begin recording your progress.\n",
                 onDeleteIconClick = { session ->
                     onEvent(DashboardEvent.OnDeleteSessionButtonClick(session))
@@ -213,14 +208,9 @@ private fun DashboardScreen(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun DashboardScreenTopBar(){
+private fun DashboardScreenTopBar() {
     CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = "Study Smart",
-                style = MaterialTheme.typography.headlineMedium
-            )
-        }
+        title = { Text(text = "Study Smart", style = MaterialTheme.typography.headlineMedium) }
     )
 }
 
@@ -230,10 +220,10 @@ private fun CountCardsSection(
     subjectCount: Int,
     studiedHours: String,
     goalStudyHours: String
-){
-    Row(modifier){
+) {
+    Row(modifier) {
         CountCard(
-            modifier = Modifier.weight(1f), //so that all the cards will be equally sized
+            modifier = Modifier.weight(1f), // so that all the cards will be equally sized
             headingText = "Subject Count",
             count = "$subjectCount"
         )
@@ -243,13 +233,16 @@ private fun CountCardsSection(
         CountCard(
             modifier = Modifier.weight(1f),
             headingText = "Studied Hours",
-            count = studiedHours)
+            count = studiedHours
+        )
 
         Spacer(modifier = Modifier.width(10.dp))
 
-        CountCard(modifier = Modifier.weight(1f),
+        CountCard(
+            modifier = Modifier.weight(1f),
             headingText = "Goal Study Hours",
-            count = goalStudyHours)
+            count = goalStudyHours
+        )
     }
 }
 
@@ -257,17 +250,17 @@ private fun CountCardsSection(
 private fun SubjectCardsSection(
     modifier: Modifier,
     subjectsList: List<Subject>,
-    emptyListText: String = "You currently don't have any subjects.\n Click the + button to add " +
-            "a new subject",
+    emptyListText: String =
+        "You currently don't have any subjects.\n Click the + button to add " + "a new subject",
     onAddIconClick: () -> Unit,
     onSubjectCardClick: (Int?) -> Unit
-){
-    Column (modifier = modifier){
-        Row (
+) {
+    Column(modifier = modifier) {
+        Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             Text(
                 text = "SUBJECTS",
                 style = MaterialTheme.typography.bodySmall,
@@ -275,18 +268,13 @@ private fun SubjectCardsSection(
             )
 
             IconButton(onClick = onAddIconClick) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Subject"
-                )
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Subject")
             }
         }
 
-        if(subjectsList.isEmpty()){
+        if (subjectsList.isEmpty()) {
             Image(
-                modifier = Modifier
-                    .size(120.dp)
-                    .align(Alignment.CenterHorizontally),
+                modifier = Modifier.size(120.dp).align(Alignment.CenterHorizontally),
                 painter = painterResource(R.drawable.img_books),
                 contentDescription = emptyListText
             )
@@ -300,14 +288,15 @@ private fun SubjectCardsSection(
             )
         }
 
-        LazyRow (
-            horizontalArrangement = Arrangement.spacedBy(12.dp),//space between each
-            contentPadding = PaddingValues(start = 12.dp, end = 12.dp)//space at the beginning and end
-        ){
-            items(subjectsList){subject ->
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp), // space between each
+            contentPadding =
+                PaddingValues(start = 12.dp, end = 12.dp) // space at the beginning and end
+        ) {
+            items(subjectsList) { subject ->
                 SubjectCard(
                     subjectName = subject.subjectName,
-                    gradientColors = subject.colors.map{ intValue -> Color(intValue) },
+                    gradientColors = subject.colors.map { intValue -> Color(intValue) },
                     onClick = { onSubjectCardClick(subject.subjectId) }
                 )
             }

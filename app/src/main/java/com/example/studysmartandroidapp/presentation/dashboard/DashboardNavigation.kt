@@ -6,8 +6,6 @@ import androidx.navigation.compose.composable
 
 private const val dashboardScreenRoute = "dashboard"
 
-fun NavGraphBuilder.dashboardScreen(navController: NavController){
-    composable(dashboardScreenRoute){
-        DashboardScreenRoute(navController)
-    }
+fun NavGraphBuilder.dashboardScreen(navController: NavController) {
+    composable(dashboardScreenRoute) { DashboardScreenRoute(navController) }
 }

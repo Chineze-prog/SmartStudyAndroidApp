@@ -10,13 +10,12 @@ import com.example.studysmartandroidapp.presentation.theme.gradient5
 
 @Entity
 data class Subject(
-    @PrimaryKey(autoGenerate = true)
-    val subjectId: Int? = null,
+    @PrimaryKey(autoGenerate = true) val subjectId: Int? = null,
     val subjectName: String,
     val goalStudyHours: Float,
     val colors: List<Int>
-){
-    companion object{
+) {
+    companion object {
         val subjectCardColors = listOf(gradient1, gradient2, gradient3, gradient4, gradient5)
     }
 }

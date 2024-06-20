@@ -10,21 +10,22 @@ import androidx.navigation.navArgument
 
 private const val subjectScreenRoute = "subject/{subjectId}"
 
-fun NavGraphBuilder.subjectScreen(navController: NavController){
+fun NavGraphBuilder.subjectScreen(navController: NavController) {
     composable(
         route = subjectScreenRoute,
-        arguments = listOf(
-            navArgument("subjectId"){
-                type = NavType.IntType
-                defaultValue = -1
-            }
-        )
-    ){backStackEntry ->
+        arguments =
+            listOf(
+                navArgument("subjectId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+    ) { backStackEntry ->
         val args = SubjectScreenArgs.fromBundle(backStackEntry.arguments ?: Bundle())
         val subjectId = args.subjectId
 
-        //if the subjectId is not a valid int the navigate back
-        if(subjectId == -1) {
+        // if the subjectId is not a valid int the navigate back
+        if (subjectId == -1) {
             navController.popBackStack()
             return@composable
         }
@@ -33,14 +34,14 @@ fun NavGraphBuilder.subjectScreen(navController: NavController){
     }
 }
 
-fun NavController.navigateToSubject(subjectId: Int){
+fun NavController.navigateToSubject(subjectId: Int) {
     this.navigate("subject/$subjectId")
 }
 
-data class SubjectScreenArgs(val subjectId: Int): NavArgs{
-    companion object{
+data class SubjectScreenArgs(val subjectId: Int) : NavArgs {
+    companion object {
         @JvmStatic
-        fun fromBundle(bundle: Bundle): SubjectScreenArgs{
+        fun fromBundle(bundle: Bundle): SubjectScreenArgs {
             return SubjectScreenArgs(bundle.getInt("subjectId", -1))
         }
     }

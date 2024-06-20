@@ -25,11 +25,7 @@ fun DeleteDialogue(
                     Text(text = "Delete")
                 }
             },
-            dismissButton = {
-                TextButton(onClick = onDismissRequest) {
-                    Text(text = "Cancel")
-                }
-            }
+            dismissButton = { TextButton(onClick = onDismissRequest) { Text(text = "Cancel") } }
         )
     }
 }

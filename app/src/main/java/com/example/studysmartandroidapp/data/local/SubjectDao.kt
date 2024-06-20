@@ -17,14 +17,12 @@ subjects which can change at any time and should be updated instantly without us
 
 @Dao
 interface SubjectDao {
-    //either insert the subject if the subject doesn't exist or update it if it does
-    @Upsert
-    suspend fun upsertSubject(subject: Subject)
+    // either insert the subject if the subject doesn't exist or update it if it does
+    @Upsert suspend fun upsertSubject(subject: Subject)
 
-    @Query("SELECT COUNT(*) FROM SUBJECT")
-    fun getTotalSubjectCount(): Flow<Int>
+    @Query("SELECT COUNT(*) FROM SUBJECT") fun getTotalSubjectCount(): Flow<Int>
 
-    //not sure why this was giving me an error but by changing it, it works now
+    // not sure why this was giving me an error but by changing it, it works now
     @Query("SELECT COALESCE(SUM(goalStudyHours), 0) FROM SUBJECT")
     fun getTotalGoalHours(): Flow<Float>
 
@@ -34,6 +32,5 @@ interface SubjectDao {
     @Query("DELETE FROM SUBJECT WHERE subjectId = :subjectId")
     suspend fun deleteSubject(subjectId: Int)
 
-    @Query("SELECT * FROM SUBJECT")
-    fun getAllSubjects(): Flow<List<Subject>>
+    @Query("SELECT * FROM SUBJECT") fun getAllSubjects(): Flow<List<Subject>>
 }

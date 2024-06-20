@@ -10,7 +10,7 @@ import com.example.studysmartandroidapp.presentation.subject.subjectScreen
 import com.example.studysmartandroidapp.presentation.task.taskScreen
 
 @Composable
-fun StudySmartNavGraph(navController: NavHostController = rememberNavController()){
+fun StudySmartNavGraph(navController: NavHostController = rememberNavController()) {
     NavHost(navController = navController, startDestination = "dashboard") {
         dashboardScreen(navController)
         subjectScreen(navController)

@@ -21,31 +21,29 @@ fun ProjectDatePicker(
     confirmButtonText: String = "Ok",
     onDismissRequest: () -> Unit,
     onConfirmButtonClick: () -> Unit
-){
-    if(isOpen){
+) {
+    if (isOpen) {
         DatePickerDialog(
             onDismissRequest = onDismissRequest,
             confirmButton = {
-                TextButton(onClick = onConfirmButtonClick) {
-                    Text(text = confirmButtonText )
-                }
+                TextButton(onClick = onConfirmButtonClick) { Text(text = confirmButtonText) }
             },
             dismissButton = {
-                TextButton(onClick = onDismissRequest) {
-                    Text(text = dismissButtonText )
-                }
+                TextButton(onClick = onDismissRequest) { Text(text = dismissButtonText) }
             },
             content = {
                 DatePicker(
                     state = state,
                     dateValidator = { timeStamp ->
-                        val selectedDate = Instant
-                            .ofEpochMilli(timeStamp)
-                            .atZone(ZoneOffset.UTC)
-                            .toLocalDate()
+                        val selectedDate =
+                            Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.UTC).toLocalDate()
 
-                        val currentDate = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
-                            .toEpochMilli().toLocalDate()
+                        val currentDate =
+                            LocalDate.now()
+                                .atStartOfDay(ZoneOffset.UTC)
+                                .toInstant()
+                                .toEpochMilli()
+                                .toLocalDate()
 
                         selectedDate >= currentDate
                     }

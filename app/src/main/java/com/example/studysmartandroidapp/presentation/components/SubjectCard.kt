@@ -19,27 +19,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.R
 
-//each subject created will have a stock image of books
+// each subject created will have a stock image of books
 @Composable
 fun SubjectCard(
     modifier: Modifier = Modifier,
     subjectName: String,
     gradientColors: List<Color>,
     onClick: () -> Unit
-){
+) {
     Box(
-        modifier =  Modifier
-            .size(150.dp)
-            .clickable { onClick() }
-            .background(
-                brush = Brush.verticalGradient(gradientColors),
-                shape = MaterialTheme.shapes.medium
-            )
-    ){
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.Center
-        ){
+        modifier =
+            Modifier.size(150.dp)
+                .clickable { onClick() }
+                .background(
+                    brush = Brush.verticalGradient(gradientColors),
+                    shape = MaterialTheme.shapes.medium
+                )
+    ) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.Center) {
             Image(
                 modifier = Modifier.size(80.dp),
                 painter = painterResource(R.drawable.img_books),

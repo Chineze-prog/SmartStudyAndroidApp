@@ -6,8 +6,6 @@ import androidx.navigation.compose.composable
 
 private const val sessionScreenRoute = "session"
 
-fun NavGraphBuilder.sessionScreen(navController: NavController){
-    composable(sessionScreenRoute){
-        SessionScreenRoute(navController)
-    }
+fun NavGraphBuilder.sessionScreen(navController: NavController) {
+    composable(sessionScreenRoute) { SessionScreenRoute(navController) }
 }

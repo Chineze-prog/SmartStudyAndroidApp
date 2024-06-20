@@ -25,16 +25,9 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 
 @Composable
-fun StudySessionCard(
-    modifier: Modifier = Modifier,
-    session: Session,
-    onDeleteClick: () -> Unit
-){
+fun StudySessionCard(modifier: Modifier = Modifier, session: Session, onDeleteClick: () -> Unit) {
     Card(modifier = modifier) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(start = 12.dp)) {
                 Text(
                     text = session.relatedSubject,
@@ -47,29 +40,32 @@ fun StudySessionCard(
 
                 Text(
                     text =
-                    if(session.date.toLocalDate() <
-                        LocalDate.now().atStartOfDay(ZoneOffset.UTC)
-                            .toInstant().toEpochMilli().toLocalDate()){
-                            LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+                        if (
+                            session.date.toLocalDate() <
+                                LocalDate.now()
+                                    .atStartOfDay(ZoneOffset.UTC)
+                                    .toInstant()
+                                    .toEpochMilli()
+                                    .toLocalDate()
+                        ) {
+                            LocalDate.now()
+                                .atStartOfDay(ZoneOffset.UTC)
+                                .toInstant()
+                                .toEpochMilli()
                                 .changeMillisToDateString()
-                    }
-                    else{ session.date.changeMillisToDateString() },
+                        } else {
+                            session.date.changeMillisToDateString()
+                        },
                     style = MaterialTheme.typography.bodySmall
                 )
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = "${session.duration} hr",
-                style = MaterialTheme.typography.titleMedium
-            )
+            Text(text = "${session.duration} hr", style = MaterialTheme.typography.titleMedium)
 
             IconButton(onClick = onDeleteClick) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Session"
-                )
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Session")
             }
         }
     }

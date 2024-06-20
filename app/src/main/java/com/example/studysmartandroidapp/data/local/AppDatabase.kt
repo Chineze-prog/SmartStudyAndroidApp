@@ -9,11 +9,10 @@ import com.example.studysmartandroidapp.domain.model.Task
 
 @Database(
     entities = [Subject::class, Task::class, Session::class],
-    version = 1 //if the schema is changed in the future, this needs to be updated
+    version = 1 // if the schema is changed in the future, this needs to be updated
 )
-
 @TypeConverters(ColorListConverter::class)
-abstract class AppDatabase: RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     abstract fun subjectDao(): SubjectDao
 
     abstract fun taskDao(): TaskDao

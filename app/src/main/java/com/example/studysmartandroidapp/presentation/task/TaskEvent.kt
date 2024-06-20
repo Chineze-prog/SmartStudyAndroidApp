@@ -14,9 +14,9 @@ sealed class TaskEvent {
 
     data class OnRelatedSubjectSelect(val subject: Subject) : TaskEvent()
 
-    data object OnIsCompleteChange: TaskEvent()
+    data object OnIsCompleteChange : TaskEvent()
 
-    data object SaveTask: TaskEvent()
+    data object SaveTask : TaskEvent()
 
-    data object DeleteTask: TaskEvent()
+    data object DeleteTask : TaskEvent()
 }

@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.android.code.quality)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
-    //id("com.google.devtools.ksp")
+    // id("com.google.devtools.ksp")
     alias(libs.plugins.spotless)
     id("androidx.room")
 }
@@ -23,9 +23,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        vectorDrawables { useSupportLibrary = true }
     }
 
     buildTypes {
@@ -42,23 +40,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
+    kotlinOptions { jvmTarget = "1.8" }
+    buildFeatures { compose = true }
+    composeOptions { kotlinCompilerExtensionVersion = "1.5.0" }
+    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+    room { schemaDirectory("$projectDir/schemas") }
 }
 
 hilt { enableAggregatingTask = true }
@@ -91,11 +77,7 @@ tasks.withType<SpotlessTask>().configureEach {
     notCompatibleWithConfigurationCache("https://github.com/diffplug/spotless/issues/987")
 }
 
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
+kotlin { jvmToolchain { languageVersion.set(JavaLanguageVersion.of(17)) } }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -125,23 +107,21 @@ dependencies {
 
     // To use Kotlin Symbol Processing (KSP)
     kapt(libs.androidx.room.compiler)
-    implementation (libs.androidx.room.ktx)
-    implementation (libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.common)
 
-    //Dagger-Hilt
+    // Dagger-Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
-    //google devtools
+    // google devtools
     implementation(libs.com.google.devtools.ksp.gradle.plugin)
 
-    //Desurgaring
+    // Desurgaring
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.ui.text.google.fonts)
 }
 
 // Allow references to generated code
-kapt {
-    correctErrorTypes = true
-}
+kapt { correctErrorTypes = true }

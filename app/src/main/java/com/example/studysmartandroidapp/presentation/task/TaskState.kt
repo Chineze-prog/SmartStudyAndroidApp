@@ -3,7 +3,7 @@ package com.example.studysmartandroidapp.presentation.task
 import com.example.studysmartandroidapp.domain.model.Subject
 import com.example.studysmartandroidapp.utils.Priority
 
-data class TaskState (
+data class TaskState(
     val title: String = "",
     val description: String = "",
     val dueDate: Long? = null,

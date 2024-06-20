@@ -21,9 +21,7 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindSubjectRepository(impl: SubjectRepositoryImpl): SubjectRepository
 
-    @Singleton
-    @Binds
-    abstract fun bindTaskRepository(impl: TaskRepositoryImpl): TaskRepository
+    @Singleton @Binds abstract fun bindTaskRepository(impl: TaskRepositoryImpl): TaskRepository
 
     @Singleton
     @Binds

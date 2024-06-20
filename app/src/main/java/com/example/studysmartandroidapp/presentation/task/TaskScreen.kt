@@ -54,17 +54,17 @@ import com.example.studysmartandroidapp.presentation.components.SubjectListBotto
 import com.example.studysmartandroidapp.presentation.components.TaskCheckBox
 import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
 import com.example.studysmartandroidapp.utils.Priority
+import com.example.studysmartandroidapp.utils.SnackbarEvent
 import com.example.studysmartandroidapp.utils.changeMillisToDateString
 import com.example.studysmartandroidapp.utils.toLocalDate
-import com.example.studysmartandroidapp.utils.SnackbarEvent
+import java.time.LocalDate
+import java.time.ZoneOffset
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 @Composable
-fun TaskScreenRoute(navController: NavController, subjectId: Int?){
+fun TaskScreenRoute(navController: NavController, subjectId: Int?) {
     val viewModel: TaskViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -76,7 +76,7 @@ fun TaskScreenRoute(navController: NavController, subjectId: Int?){
         onBackClick = {
             if (subjectId != null) {
                 navController.navigateToSubject(subjectId)
-            } else{
+            } else {
                 navController.navigate("dashboard")
             }
         }
@@ -90,50 +90,57 @@ private fun TaskScreen(
     onEvent: (TaskEvent) -> Unit,
     snackbarEvent: SharedFlow<SnackbarEvent>,
     onBackClick: () -> Unit
-){
-    val currentDate = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
-        .toEpochMilli().toLocalDate()
+) {
+    val currentDate =
+        LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli().toLocalDate()
 
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis =
-        if(state.currentTaskId == null || state.dueDate == null ||
-            state.dueDate.toLocalDate() < currentDate){
-            LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-        }
-        else{ state.dueDate }
-    )
+    val datePickerState =
+        rememberDatePickerState(
+            initialSelectedDateMillis =
+                if (
+                    state.currentTaskId == null ||
+                        state.dueDate == null ||
+                        state.dueDate.toLocalDate() < currentDate
+                ) {
+                    LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+                } else {
+                    state.dueDate
+                }
+        )
 
-    var isDatePickerDialogueOpen by remember{ mutableStateOf(false) }
+    var isDatePickerDialogueOpen by remember { mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState()
-    var isBottomSheetOpen by remember{ mutableStateOf(false) }
+    var isBottomSheetOpen by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    var isDeleteTaskDialogueOpen by remember{ mutableStateOf(false) }
+    var isDeleteTaskDialogueOpen by remember { mutableStateOf(false) }
 
-    var taskTitleError by rememberSaveable { mutableStateOf <String?> (null) }
+    var taskTitleError by rememberSaveable { mutableStateOf<String?>(null) }
 
-    taskTitleError = when{
-        state.title.isBlank() -> "Please enter task title."
-        state.title.length < 4 -> "Task title is too short."
-        state.title.length > 20 -> "Task title is too long."
-        else -> null
-    }
+    taskTitleError =
+        when {
+            state.title.isBlank() -> "Please enter task title."
+            state.title.length < 4 -> "Task title is too short."
+            state.title.length > 20 -> "Task title is too long."
+            else -> null
+        }
 
-    //snackbar host state
+    // snackbar host state
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
         snackbarEvent.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is SnackbarEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
                         message = event.message,
                         duration = event.duration
                     )
                 }
-
-                SnackbarEvent.NavigateUp -> { onBackClick() }
+                SnackbarEvent.NavigateUp -> {
+                    onBackClick()
+                }
             }
         }
     }
@@ -163,18 +170,18 @@ private fun TaskScreen(
         sheetState = sheetState,
         isOpen = isBottomSheetOpen,
         subjects = state.subjects,
-        //how to dismiss a bottom sheet if not through the onDismissRequest
+        // how to dismiss a bottom sheet if not through the onDismissRequest
         onSubjectClick = { relatedSubject ->
-            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                if(!sheetState.isVisible) isBottomSheetOpen = false
-            }
+            scope
+                .launch { sheetState.hide() }
+                .invokeOnCompletion { if (!sheetState.isVisible) isBottomSheetOpen = false }
 
             onEvent(TaskEvent.OnRelatedSubjectSelect(relatedSubject))
         },
-        onDismissRequest = { isBottomSheetOpen = false}
+        onDismissRequest = { isBottomSheetOpen = false }
     )
 
-    Scaffold (
+    Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TaskScreenTopBar(
@@ -187,14 +194,14 @@ private fun TaskScreen(
                 onCheckBoxClick = { onEvent(TaskEvent.OnIsCompleteChange) }
             )
         }
-    ){ paddingValue ->
+    ) { paddingValue ->
         Column(
-            modifier = Modifier
-                .verticalScroll(state = rememberScrollState())
-                .fillMaxSize()
-                .padding(paddingValue)
-                .padding(horizontal = 12.dp)
-        ){
+            modifier =
+                Modifier.verticalScroll(state = rememberScrollState())
+                    .fillMaxSize()
+                    .padding(paddingValue)
+                    .padding(horizontal = 12.dp)
+        ) {
             OutlinedTextField(
                 value = state.title,
                 onValueChange = { newTitle -> onEvent(TaskEvent.OnTitleChange(newTitle)) },
@@ -210,21 +217,18 @@ private fun TaskScreen(
                 value = state.description,
                 onValueChange = { newDesc -> onEvent(TaskEvent.OnTitleChange(newDesc)) },
                 label = { Text(text = "Description") },
-                //singleLine = true, commented so the text field can have multiple lines
+                // singleLine = true, commented so the text field can have multiple lines
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = "Due Date",
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text(text = "Due Date", style = MaterialTheme.typography.bodySmall)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Text(
                     text = state.dueDate.changeMillisToDateString(),
                     style = MaterialTheme.typography.bodyLarge
@@ -240,25 +244,26 @@ private fun TaskScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = "Priority",
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text(text = "Priority", style = MaterialTheme.typography.bodySmall)
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Row(modifier = Modifier.fillMaxWidth()){
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Priority.entries.forEach { priority ->
                     PriorityButton(
-                        modifier = Modifier.weight(1f), //so the three buttons are the same size
+                        modifier = Modifier.weight(1f), // so the three buttons are the same size
                         label = priority.title,
                         backgroundColor = priority.color,
-                        //will change once view model is implemented
-                        borderColor = if (priority == state.priority) { Color.White }
-                        else Color.Transparent,
-                        //will change once view model is implemented
-                        labelColor = if (priority == state.priority) { Color.White }
-                        else Color.White.copy(alpha = 0.7f),
+                        // will change once view model is implemented
+                        borderColor =
+                            if (priority == state.priority) {
+                                Color.White
+                            } else Color.Transparent,
+                        // will change once view model is implemented
+                        labelColor =
+                            if (priority == state.priority) {
+                                Color.White
+                            } else Color.White.copy(alpha = 0.7f),
                         onPriorityButtonClick = { onEvent(TaskEvent.OnPriorityChange(priority)) }
                     )
                 }
@@ -266,16 +271,13 @@ private fun TaskScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            Text(
-                text = "Related to subject",
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text(text = "Related to subject", style = MaterialTheme.typography.bodySmall)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Text(
                     text = state.relatedToSubject ?: "",
                     style = MaterialTheme.typography.bodyLarge
@@ -292,10 +294,8 @@ private fun TaskScreen(
             Button(
                 enabled = taskTitleError == null,
                 onClick = { onEvent(TaskEvent.SaveTask) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            ){
+                modifier = Modifier.fillMaxWidth().padding(20.dp)
+            ) {
                 Text(text = "Save")
             }
         }
@@ -312,7 +312,7 @@ private fun TaskScreenTopBar(
     onBackButtonClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
     onCheckBoxClick: () -> Unit
-){
+) {
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = onBackButtonClick) {
@@ -322,15 +322,10 @@ private fun TaskScreenTopBar(
                 )
             }
         },
-        title = {
-            Text(
-                text = taskName,
-                style = MaterialTheme.typography.headlineSmall
-            )
-        },
+        title = { Text(text = taskName, style = MaterialTheme.typography.headlineSmall) },
         actions = {
-            //if the tasks already exists display its check box color
-            if(taskExists){
+            // if the tasks already exists display its check box color
+            if (taskExists) {
                 TaskCheckBox(
                     isComplete = isComplete,
                     borderColor = checkBoxBorderColor,
@@ -339,10 +334,7 @@ private fun TaskScreenTopBar(
             }
 
             IconButton(onClick = onDeleteButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Subject"
-                )
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Subject")
             }
         }
     )
@@ -356,16 +348,17 @@ private fun PriorityButton(
     borderColor: Color,
     labelColor: Color,
     onPriorityButtonClick: () -> Unit
-){
+) {
     Box(
-        modifier = modifier
-            .background(backgroundColor)
-            .clickable { onPriorityButtonClick() }
-            .padding(5.dp) //padding b/w the background and the border
-            .border(1.dp, borderColor, RoundedCornerShape(5.dp))
-            .padding(5.dp), //padding between the border and the label
+        modifier =
+            modifier
+                .background(backgroundColor)
+                .clickable { onPriorityButtonClick() }
+                .padding(5.dp) // padding b/w the background and the border
+                .border(1.dp, borderColor, RoundedCornerShape(5.dp))
+                .padding(5.dp), // padding between the border and the label
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Text(text = label, color = labelColor)
     }
 }
