@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    
     <application
         android:name=".StudySmartApp"
         android:allowBackup="true"
@@ -22,13 +25,21 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="study_smart"
+                    android:host="dashboard"
+                    android:path="/session" />
+            </intent-filter>
         </activity>
 
         <service
             android:name=".presentation.session.StudySessionTimerService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync"
-           />
+            android:exported="false" />
     </application>
 
 </manifest>

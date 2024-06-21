@@ -52,3 +52,9 @@ sealed class SnackbarEvent {
 
     data object NavigateUp : SnackbarEvent()
 }
+
+// padStart - if the string is not of 2 length, it will append the zero char. for values less than
+// 10 .e.g. 9 will be 09
+fun Int.pad(): String{
+    return this.toString().padStart(length = 2, padChar = '0')
+}
