@@ -8,7 +8,10 @@ import androidx.navigation.navDeepLink
 
 private const val sessionScreenRoute = "session"
 
-fun NavGraphBuilder.sessionScreen(navController: NavController) {
+fun NavGraphBuilder.sessionScreen(
+    navController: NavController,
+    timerService: StudySessionTimerService
+) {
     composable(
         route = sessionScreenRoute,
         deepLinks = listOf(navDeepLink {
@@ -16,6 +19,6 @@ fun NavGraphBuilder.sessionScreen(navController: NavController) {
             uriPattern = "study_smart://dashboard/session"
         })
     ) {
-        SessionScreenRoute(navController)
+        SessionScreenRoute(navController, timerService)
     }
 }

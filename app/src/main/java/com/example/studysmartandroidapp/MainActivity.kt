@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             if(isBound){
                 StudySmartAndroidAppTheme {
-                    StudySmartNavGraph()
+                    StudySmartNavGraph(timerService = timerService)
                 }
             }
         }

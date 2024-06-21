@@ -77,7 +77,7 @@ class StudySessionTimerService: Service() {
     var currentTimerState = mutableStateOf(TimerState.IDLE)
         private set
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    override fun onBind(intent: Intent?): IBinder? = binder
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action.let{ constant ->
@@ -152,7 +152,7 @@ class StudySessionTimerService: Service() {
             timer.cancel()
         }
 
-        currentTimerState.value = TimerState.IDLE
+        currentTimerState.value = TimerState.STOPPED
     }
 
     private fun cancelTimer(){
