@@ -69,16 +69,13 @@ fun SessionScreenRoute(navController: NavController, timerService: StudySessionT
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SessionScreen(
-    onBackButtonClick: () -> Unit,
-    timerService: StudySessionTimerService
-) {
+private fun SessionScreen(onBackButtonClick: () -> Unit, timerService: StudySessionTimerService) {
     val hours by timerService.hours
     val minutes by timerService.minutes
     val seconds by timerService.seconds
     val currentTimerState by timerService.currentTimerState
 
-    //context
+    // context
     val context = LocalContext.current
 
     var relatedSubject by remember { mutableStateOf("") }
@@ -111,15 +108,11 @@ private fun SessionScreen(
 
     Scaffold(topBar = { SessionScreenTopBar(onBackButtonClick = onBackButtonClick) }) { paddingValue
         ->
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValue)) {
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(paddingValue)) {
             // timer
             item {
                 TimerSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f),
+                    modifier = Modifier.fillMaxWidth().aspectRatio(1f),
                     // makes the height of the timer section to be whatever is the
                     // width of that section, so the ratio is 1:1
                     hours = hours,
@@ -130,9 +123,7 @@ private fun SessionScreen(
 
             item {
                 RelatedSubjects(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                     relatedSubject = relatedSubject,
                     selectSubjectButtonClick = { isBottomSheetOpen = true }
                 )
@@ -140,15 +131,14 @@ private fun SessionScreen(
 
             item {
                 ButtonsSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
                     onStartButtonClick = {
                         ServiceHelper.triggerForegroundService(
                             context = context,
-                            action = if(currentTimerState == TimerState.STARTED) {
-                                ACTION_SERVICE_STOP
-                            } else ACTION_SERVICE_START
+                            action =
+                                if (currentTimerState == TimerState.STARTED) {
+                                    ACTION_SERVICE_STOP
+                                } else ACTION_SERVICE_START
                         )
                     },
                     onCancelButtonClick = {
@@ -157,9 +147,7 @@ private fun SessionScreen(
                             action = ACTION_SERVICE_CANCEL
                         )
                     },
-                    onFinishButtonClick = {
-
-                    },
+                    onFinishButtonClick = {},
                     timerState = currentTimerState,
                     seconds = seconds
                 )
@@ -200,11 +188,10 @@ private fun TimerSection(
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Box(
             modifier =
-            Modifier
-                .size(250.dp)
-                .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                Modifier.size(250.dp)
+                    .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
         )
-        Row{
+        Row {
             AnimatedContent(
                 targetState = hours,
                 label = hours,
@@ -241,11 +228,11 @@ private fun TimerSection(
     }
 }
 
-//to make the timer animation smoother
+// to make the timer animation smoother
 private fun timerTextAnimation(duration: Int = 600): ContentTransform {
-    return slideInVertically (animationSpec = tween(duration)){ fullHeight -> fullHeight } +
-            fadeIn(animationSpec = tween(duration)) togetherWith
-            slideOutVertically (animationSpec = tween(duration)){ fullHeight -> -fullHeight } +
+    return slideInVertically(animationSpec = tween(duration)) { fullHeight -> fullHeight } +
+        fadeIn(animationSpec = tween(duration)) togetherWith
+        slideOutVertically(animationSpec = tween(duration)) { fullHeight -> -fullHeight } +
             fadeOut(animationSpec = tween(duration))
 }
 
@@ -283,7 +270,6 @@ private fun ButtonsSection(
     onFinishButtonClick: () -> Unit,
     timerState: TimerState,
     seconds: String
-
 ) {
     Row(
         modifier = modifier,
@@ -298,19 +284,22 @@ private fun ButtonsSection(
 
         Button(
             onClick = onStartButtonClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if(timerState == TimerState.STARTED) Color.Red
-                else MaterialTheme.colorScheme.primary,
-                contentColor = Color.White
-            )
-        ){
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor =
+                        if (timerState == TimerState.STARTED) Color.Red
+                        else MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                )
+        ) {
             Text(
                 modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp),
-                text = when(timerState) {
-                    TimerState.STARTED -> "Stop"
-                    TimerState.STOPPED -> "Resume"
-                    else -> "Start"
-                }
+                text =
+                    when (timerState) {
+                        TimerState.STARTED -> "Stop"
+                        TimerState.STOPPED -> "Resume"
+                        else -> "Start"
+                    }
             )
         }
 

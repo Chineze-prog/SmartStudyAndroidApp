@@ -14,10 +14,13 @@ fun NavGraphBuilder.sessionScreen(
 ) {
     composable(
         route = sessionScreenRoute,
-        deepLinks = listOf(navDeepLink {
-            action = Intent.ACTION_VIEW
-            uriPattern = "study_smart://dashboard/session"
-        })
+        deepLinks =
+            listOf(
+                navDeepLink {
+                    action = Intent.ACTION_VIEW
+                    uriPattern = "study_smart://dashboard/session"
+                }
+            )
     ) {
         SessionScreenRoute(navController, timerService)
     }

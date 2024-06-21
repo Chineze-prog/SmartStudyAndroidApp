@@ -29,19 +29,20 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var timerService: StudySessionTimerService
 
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as StudySessionTimerService.StudySessionTimerBinder
-            timerService = binder.getService()
-            isBound = true
+    private val connection =
+        object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                val binder = service as StudySessionTimerService.StudySessionTimerBinder
+                timerService = binder.getService()
+                isBound = true
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                isBound = false
+            }
         }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-        }
-    }
-
-    //on start of the main activity, we will bind the service
+    // on start of the main activity, we will bind the service
     override fun onStart() {
         super.onStart()
         Intent(this, StudySessionTimerService::class.java).also { intent ->
@@ -52,28 +53,27 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //on create we will wrap the content if an if condition
+        // on create we will wrap the content if an if condition
         setContent {
-            if(isBound){
-                StudySmartAndroidAppTheme {
-                    StudySmartNavGraph(timerService = timerService)
-                }
+            if (isBound) {
+                StudySmartAndroidAppTheme { StudySmartNavGraph(timerService = timerService) }
             }
         }
 
         requestPermission()
     }
 
-    private fun requestPermission(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-            0
-        )
+    private fun requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                0
+            )
+        }
     }
 
-    //on stop we are unbinding the service
+    // on stop we are unbinding the service
     override fun onStop() {
         super.onStop()
         unbindService(connection)

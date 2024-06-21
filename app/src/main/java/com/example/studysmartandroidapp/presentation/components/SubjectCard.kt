@@ -22,7 +22,7 @@ import com.example.studysmartandroidapp.R
 // each subject created will have a stock image of books
 @Composable
 fun SubjectCard(
-    //modifier: Modifier = Modifier,
+    // modifier: Modifier = Modifier,
     subjectName: String,
     gradientColors: List<Color>,
     onClick: () -> Unit

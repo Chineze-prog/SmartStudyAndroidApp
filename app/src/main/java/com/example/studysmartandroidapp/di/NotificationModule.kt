@@ -24,13 +24,14 @@ object NotificationModule {
 
     @ServiceScoped
     @Provides
-    fun provideNotificationBuilder(@ApplicationContext context: Context): NotificationCompat.Builder{
-        return NotificationCompat
-            .Builder(context, NOTIFICATION_CHANEL_ID)
+    fun provideNotificationBuilder(
+        @ApplicationContext context: Context
+    ): NotificationCompat.Builder {
+        return NotificationCompat.Builder(context, NOTIFICATION_CHANEL_ID)
             .setContentTitle("Study Session")
             .setContentText("00:00:00")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setOngoing(true) //this means the notification cannot be swiped away by the user
+            .setOngoing(true) // this means the notification cannot be swiped away by the user
             .setContentIntent(ServiceHelper.clickPendingIntent(context))
     }
 }
