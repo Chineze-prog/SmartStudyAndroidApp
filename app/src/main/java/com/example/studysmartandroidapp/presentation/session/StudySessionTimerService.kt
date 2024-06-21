@@ -57,7 +57,7 @@ class StudySessionTimerService : Service() {
 
     private val binder = StudySessionTimerBinder()
 
-    var duration: Duration = Duration.ZERO
+    var duration: Duration = ZERO //was Duration.ZERO
 
     var hours = mutableStateOf("00")
         private set
