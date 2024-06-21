@@ -32,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +42,9 @@ import com.example.studysmartandroidapp.presentation.components.SubjectListBotto
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.sessions
 import com.example.studysmartandroidapp.subjects
+import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_CANCEL
+import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_START
+import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_STOP
 import kotlinx.coroutines.launch
 
 @Composable
@@ -53,6 +57,9 @@ fun SessionScreenRoute(navController: NavController) {
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun SessionScreen(onBackButtonClick: () -> Unit) {
+    //context
+    val context = LocalContext.current
+
     var relatedSubject by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState()
     var isBottomSheetOpen by remember { mutableStateOf(false) }
@@ -104,15 +111,29 @@ private fun SessionScreen(onBackButtonClick: () -> Unit) {
             item {
                 ButtonsSection(
                     modifier = Modifier.fillMaxWidth().padding(12.dp),
-                    onStartButtonClick = { /*TODO*/},
-                    onCancelButtonClick = { /*TODO*/},
-                    onFinishButtonClick = {}
+                    onStartButtonClick = {
+                        ServiceHelper.triggerForegroundService(
+                            context = context,
+                            action = ACTION_SERVICE_START
+                        )
+                    },
+                    onCancelButtonClick = {
+                        ServiceHelper.triggerForegroundService(
+                            context = context,
+                            action = ACTION_SERVICE_STOP
+                        )
+                    },
+                    onFinishButtonClick = {
+                        ServiceHelper.triggerForegroundService(
+                            context = context,
+                            action = ACTION_SERVICE_CANCEL
+                        )
+                    }
                 )
             }
 
             studySessionsList(
                 sectionTitle = "STUDY SESSIONS HISTORY",
-                // sessions = emptyList(),
                 sessions = sessions,
                 emptyListText =
                     "You don't have any recent study sessions.\n Start a study " +
@@ -144,24 +165,7 @@ private fun TimerSection(modifier: Modifier) {
                 Modifier.size(250.dp)
                     .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
         )
-        /*
-        //constant progress bar, remains the same(background)
-        CircularProgressIndicator(
-            modifier = Modifier.fillMaxSize(),
-            progress = 1f,
-            strokeWidth = 4.dp,
-            strokeCap = StrokeCap.Round,
-            color = MaterialTheme.colorScheme.surfaceVariant
-        )
 
-        //progress bar that moves (tracks actual progress)
-        CircularProgressIndicator(
-            modifier = Modifier.fillMaxSize(),
-            //progress = progress,
-            strokeWidth = 4.dp,
-            strokeCap = StrokeCap.Round
-        )
-        */
         Text(text = "00:00:00", style = MaterialTheme.typography.titleLarge.copy(fontSize = 45.sp))
     }
 }
@@ -196,7 +200,6 @@ private fun RelatedSubjects(
 private fun ButtonsSection(
     modifier: Modifier,
     onStartButtonClick: () -> Unit,
-    // onStopButtonClick: () -> Unit,
     onCancelButtonClick: () -> Unit,
     onFinishButtonClick: () -> Unit,
 ) {

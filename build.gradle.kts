@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     id("com.google.dagger.hilt.android") version "2.51" apply false
     id("com.google.devtools.ksp") version "1.9.22-1.0.18" apply false
-    //alias(libs.plugins.android.library) apply false
     alias(libs.plugins.spotless) apply false
     id("androidx.room") version "2.6.1" apply false
 }
