@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.presentation.components.AddSubjectDialogue
 import com.example.studysmartandroidapp.presentation.components.CountCard
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
@@ -65,10 +66,13 @@ fun SubjectScreenRoute(navController: NavController) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val overdueTasks by viewModel.overdueTasks.collectAsStateWithLifecycle()
+
     if (state.currentSubjectId != null) {
         SubjectScreen(
             state = state,
             onEvent = viewModel::onEvent,
+            overdueTasks = overdueTasks,
             snackbarEvent = viewModel.snackbarEventFlow,
             onTaskCardClick = { taskId ->
                 navController.navigateToTask(taskId = taskId, subjectId = state.currentSubjectId)
@@ -86,6 +90,7 @@ fun SubjectScreenRoute(navController: NavController) {
 private fun SubjectScreen(
     state: SubjectState,
     onEvent: (SubjectEvent) -> Unit,
+    overdueTasks: List<Task>,
     snackbarEvent: SharedFlow<SnackbarEvent>,
     onTaskCardClick: (Int?) -> Unit,
     onAddTaskClick: () -> Unit,
@@ -205,11 +210,22 @@ private fun SubjectScreen(
 
             tasksList(
                 sectionTitle = "UPCOMING TASKS",
-                // tasks = emptyList(),
                 tasks = state.upcomingTasks,
                 emptyListText =
                     "You don't have any upcoming tasks.\n Click the + button in the" +
                         " subject screen to add a new task.",
+                onTaskCardClick = onTaskCardClick,
+                onCheckBoxClick = { newStatus ->
+                    onEvent(SubjectEvent.OnTaskIsCompleteChange(newStatus))
+                }
+            )
+
+            item { Spacer(modifier = Modifier.height(20.dp)) }
+
+            tasksList(
+                sectionTitle = "OVERDUE TASKS",
+                tasks = overdueTasks,
+                emptyListText = "You currently do not have any overdue tasks.",
                 onTaskCardClick = onTaskCardClick,
                 onCheckBoxClick = { newStatus ->
                     onEvent(SubjectEvent.OnTaskIsCompleteChange(newStatus))

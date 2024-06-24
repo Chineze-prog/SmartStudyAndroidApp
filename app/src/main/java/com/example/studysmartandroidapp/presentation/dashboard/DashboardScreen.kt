@@ -65,12 +65,14 @@ import kotlinx.coroutines.flow.collectLatest
 fun DashboardScreenRoute(navController: NavController, timerService: StudySessionTimerService) {
     val viewModel: DashboardViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val tasks by viewModel.tasks.collectAsStateWithLifecycle()
+    val upcomingTasks by viewModel.upcomingTasks.collectAsStateWithLifecycle()
+    val overdueTasks by viewModel.overdueTasks.collectAsStateWithLifecycle()
     val recentSessions by viewModel.recentSessions.collectAsStateWithLifecycle()
 
     DashboardScreen(
         state = state,
-        tasks = tasks,
+        upcomingTasks = upcomingTasks,
+        overdueTasks = overdueTasks,
         recentSessions = recentSessions,
         onEvent = viewModel::onEvent,
         snackbarEvent = viewModel.snackbarEventFlow,
@@ -88,7 +90,8 @@ fun DashboardScreenRoute(navController: NavController, timerService: StudySessio
 @Composable
 private fun DashboardScreen(
     state: DashboardState,
-    tasks: List<Task>,
+    upcomingTasks: List<Task>,
+    overdueTasks: List<Task>,
     recentSessions: List<Session>,
     onEvent: (DashboardEvent) -> Unit,
     snackbarEvent: SharedFlow<SnackbarEvent>,
@@ -181,18 +184,31 @@ private fun DashboardScreen(
                 ) {
                     Text(
                         text =
-                        if(currentTimerState == TimerState.STARTED) "Resume Current Study Session"
-                        else "Start Study Session"
+                            if (currentTimerState == TimerState.STARTED)
+                                "Resume Current Study Session"
+                            else "Start Study Session"
                     )
                 }
             }
 
             tasksList(
                 sectionTitle = "UPCOMING TASKS",
-                tasks = tasks,
+                tasks = upcomingTasks,
                 emptyListText =
                     "You don't have any upcoming tasks.\n Click the + button in the" +
                         " subject screen to add a new task.",
+                onTaskCardClick = onTaskCardClick,
+                onCheckBoxClick = { newStatus ->
+                    onEvent(DashboardEvent.OnTaskIsCompleteChange(newStatus))
+                }
+            )
+
+            item { Spacer(modifier = Modifier.height(20.dp)) }
+
+            tasksList(
+                sectionTitle = "OVERDUE TASKS",
+                tasks = overdueTasks,
+                emptyListText = "You currently do not have any overdue tasks.",
                 onTaskCardClick = onTaskCardClick,
                 onCheckBoxClick = { newStatus ->
                     onEvent(DashboardEvent.OnTaskIsCompleteChange(newStatus))

@@ -13,12 +13,16 @@ import com.example.studysmartandroidapp.domain.repository.SubjectRepository
 import com.example.studysmartandroidapp.domain.repository.TaskRepository
 import com.example.studysmartandroidapp.utils.SnackbarEvent
 import com.example.studysmartandroidapp.utils.toHours
+import com.example.studysmartandroidapp.utils.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import java.time.ZoneOffset
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -58,6 +62,15 @@ constructor(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
                 initialValue = SubjectState()
+            )
+
+    val overdueTasks: StateFlow<List<Task>> =
+        taskRepository
+            .getOverdueTasksForSubject(currentStudentId)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
             )
 
     // so that the current subject is fetched automatically
@@ -104,12 +117,27 @@ constructor(
     private fun updateTask(task: Task) {
         viewModelScope.launch {
             try {
+                val currentDate =
+                    LocalDate.now()
+                        .atStartOfDay(ZoneOffset.UTC)
+                        .toInstant()
+                        .toEpochMilli()
+                        .toLocalDate()
+
                 taskRepository.upsertTask(task = task.copy(isComplete = !task.isComplete))
 
                 if (!task.isComplete) {
                     _snackbarEventFlow.emit(SnackbarEvent.ShowSnackbar("Saved in completed tasks."))
                 } else {
-                    _snackbarEventFlow.emit(SnackbarEvent.ShowSnackbar("Saved in upcoming tasks."))
+                    if (task.dueDate.toLocalDate() >= currentDate) {
+                        _snackbarEventFlow.emit(
+                            SnackbarEvent.ShowSnackbar("Saved in upcoming tasks.")
+                        )
+                    } else {
+                        _snackbarEventFlow.emit(
+                            SnackbarEvent.ShowSnackbar("Saved in overdue tasks.")
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 // else display error message

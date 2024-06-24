@@ -3,6 +3,9 @@ package com.example.studysmartandroidapp.data.repository
 import com.example.studysmartandroidapp.data.local.TaskDao
 import com.example.studysmartandroidapp.domain.model.Task
 import com.example.studysmartandroidapp.domain.repository.TaskRepository
+import com.example.studysmartandroidapp.utils.toLocalDate
+import java.time.LocalDate
+import java.time.ZoneOffset
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,9 +24,24 @@ class TaskRepositoryImpl @Inject constructor(private val taskDao: TaskDao) : Tas
     }
 
     override fun getUpcomingTasksForSubject(subjectId: Int): Flow<List<Task>> {
+        val currentDate =
+            LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli().toLocalDate()
+
         return taskDao
             .getTasksForSubject(subjectId)
             .map { tasks -> tasks.filter { task -> task.isComplete.not() } }
+            .map { tasks -> tasks.filter { task -> task.dueDate.toLocalDate() >= currentDate } }
+            .map { tasks -> sortTasks(tasks) }
+    }
+
+    override fun getOverdueTasksForSubject(subjectId: Int): Flow<List<Task>> {
+        val currentDate =
+            LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli().toLocalDate()
+
+        return taskDao
+            .getTasksForSubject(subjectId)
+            .map { tasks -> tasks.filter { task -> task.isComplete.not() } }
+            .map { tasks -> tasks.filter { task -> task.dueDate.toLocalDate() < currentDate } }
             .map { tasks -> sortTasks(tasks) }
     }
 
@@ -35,10 +53,25 @@ class TaskRepositoryImpl @Inject constructor(private val taskDao: TaskDao) : Tas
     }
 
     override fun getAllUpcomingTasks(): Flow<List<Task>> {
+        val currentDate =
+            LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli().toLocalDate()
+
         // we have to filter out incomplete tasks since getAllTasks() returns all tasks
         return taskDao
             .getAllTasks()
             .map { tasks -> tasks.filter { task -> task.isComplete.not() } }
+            .map { tasks -> tasks.filter { task -> task.dueDate.toLocalDate() >= currentDate } }
+            .map { tasks -> sortTasks(tasks) }
+    }
+
+    override fun getAllOverdueTasks(): Flow<List<Task>> {
+        val currentDate =
+            LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli().toLocalDate()
+
+        return taskDao
+            .getAllTasks()
+            .map { tasks -> tasks.filter { task -> task.isComplete.not() } }
+            .map { tasks -> tasks.filter { task -> task.dueDate.toLocalDate() < currentDate } }
             .map { tasks -> sortTasks(tasks) }
     }
 

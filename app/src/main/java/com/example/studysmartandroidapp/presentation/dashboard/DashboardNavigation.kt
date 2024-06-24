@@ -9,6 +9,7 @@ private const val dashboardScreenRoute = "dashboard"
 
 fun NavGraphBuilder.dashboardScreen(
     navController: NavController,
-    timerService: StudySessionTimerService) {
+    timerService: StudySessionTimerService
+) {
     composable(dashboardScreenRoute) { DashboardScreenRoute(navController, timerService) }
 }

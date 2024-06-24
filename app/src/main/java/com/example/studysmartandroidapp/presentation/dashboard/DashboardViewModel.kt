@@ -73,9 +73,18 @@ constructor(
                 initialValue = DashboardState()
             )
 
-    val tasks: StateFlow<List<Task>> =
+    val upcomingTasks: StateFlow<List<Task>> =
         taskRepository
             .getAllUpcomingTasks()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
+
+    val overdueTasks: StateFlow<List<Task>> =
+        taskRepository
+            .getAllOverdueTasks()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
