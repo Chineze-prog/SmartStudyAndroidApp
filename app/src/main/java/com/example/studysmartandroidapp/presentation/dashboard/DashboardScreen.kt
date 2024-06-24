@@ -53,6 +53,8 @@ import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.SubjectCard
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
 import com.example.studysmartandroidapp.presentation.components.tasksList
+import com.example.studysmartandroidapp.presentation.session.StudySessionTimerService
+import com.example.studysmartandroidapp.presentation.session.TimerState
 import com.example.studysmartandroidapp.presentation.subject.navigateToSubject
 import com.example.studysmartandroidapp.presentation.task.navigateToTask
 import com.example.studysmartandroidapp.utils.SnackbarEvent
@@ -60,7 +62,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun DashboardScreenRoute(navController: NavController) {
+fun DashboardScreenRoute(navController: NavController, timerService: StudySessionTimerService) {
     val viewModel: DashboardViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
@@ -78,7 +80,8 @@ fun DashboardScreenRoute(navController: NavController) {
                 navController.navigateToSubject(subjectId)
             }
         },
-        onTaskCardClick = { navController.navigateToTask(taskId = it, subjectId = null) }
+        onTaskCardClick = { navController.navigateToTask(taskId = it, subjectId = null) },
+        timerService = timerService
     )
 }
 
@@ -91,11 +94,14 @@ private fun DashboardScreen(
     snackbarEvent: SharedFlow<SnackbarEvent>,
     onStartSessionButtonClick: () -> Unit,
     onSubjectCardClick: (Int?) -> Unit,
-    onTaskCardClick: (Int?) -> Unit
+    onTaskCardClick: (Int?) -> Unit,
+    timerService: StudySessionTimerService
 ) {
     var isAddSubjectDialogueOpen by rememberSaveable { mutableStateOf(false) }
 
     var isDeleteSessionDialogueOpen by rememberSaveable { mutableStateOf(false) }
+
+    val currentTimerState by timerService.currentTimerState
 
     // snackbar host state
     val snackbarHostState = remember { SnackbarHostState() }
@@ -173,7 +179,11 @@ private fun DashboardScreen(
                         Modifier.fillMaxWidth().padding(horizontal = 48.dp, vertical = 20.dp),
                     onClick = onStartSessionButtonClick
                 ) {
-                    Text(text = "Start Study Session")
+                    Text(
+                        text =
+                        if(currentTimerState == TimerState.STARTED) "Resume Current Study Session"
+                        else "Start Study Session"
+                    )
                 }
             }
 

@@ -16,7 +16,7 @@ fun StudySmartNavGraph(
     timerService: StudySessionTimerService
 ) {
     NavHost(navController = navController, startDestination = "dashboard") {
-        dashboardScreen(navController)
+        dashboardScreen(navController, timerService)
         subjectScreen(navController)
         taskScreen(navController)
         sessionScreen(navController, timerService)
