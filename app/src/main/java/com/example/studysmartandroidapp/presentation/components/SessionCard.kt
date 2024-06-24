@@ -44,7 +44,10 @@ fun StudySessionCard(modifier: Modifier = Modifier, session: Session, onDeleteCl
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Text(text = "${session.duration.toHours()} hr", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "${session.duration.toHours()} hr",
+                style = MaterialTheme.typography.titleMedium
+            )
 
             IconButton(onClick = onDeleteClick) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Session")

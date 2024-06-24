@@ -99,31 +99,25 @@ constructor(
     fun onEvent(event: DashboardEvent) {
         when (event) {
             DashboardEvent.DeleteSession -> deleteSession()
-
             is DashboardEvent.OnDeleteSessionButtonClick -> {
                 _state.update { dashboardState -> dashboardState.copy(session = event.session) }
             }
-
             is DashboardEvent.OnGoalStudyHoursChange -> {
                 _state.update { dashboardState ->
                     dashboardState.copy(goalStudyHours = event.hours)
                 }
             }
-
             is DashboardEvent.OnSubjectCardColorChange -> {
                 _state.update { dashboardState ->
                     dashboardState.copy(subjectCardColors = event.colors)
                 }
             }
-
             is DashboardEvent.OnSubjectNameChange -> {
                 _state.update { dashboardState -> dashboardState.copy(subjectName = event.name) }
             }
-
             is DashboardEvent.OnTaskIsCompleteChange -> {
                 updateTask(event.task)
             }
-
             DashboardEvent.SaveSubject -> saveSubject()
         }
     }
@@ -181,20 +175,15 @@ constructor(
         }
     }
 
-    private fun deleteSession(){
+    private fun deleteSession() {
         viewModelScope.launch {
             try {
-                state.value.session?.let { session ->
-                    sessionRepository.deleteSession(session)
-                }
+                state.value.session?.let { session -> sessionRepository.deleteSession(session) }
 
                 _snackbarEventFlow.emit(
-                    SnackbarEvent.ShowSnackbar(
-                        message = "Session deleted successfully."
-                    )
+                    SnackbarEvent.ShowSnackbar(message = "Session deleted successfully.")
                 )
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
                         message = "Couldn't delete session.\n ${e.message}",

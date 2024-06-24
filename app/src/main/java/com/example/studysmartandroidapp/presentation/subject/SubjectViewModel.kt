@@ -72,31 +72,23 @@ constructor(
     fun onEvent(event: SubjectEvent) {
         when (event) {
             SubjectEvent.DeleteSession -> deleteSession()
-
             SubjectEvent.DeleteSubject -> deleteSubject()
-
             is SubjectEvent.OnDeleteSessionButtonClick -> {
                 _state.update { subjectState -> subjectState.copy(session = event.session) }
             }
-
             is SubjectEvent.OnGoalStudyHoursChange -> {
                 _state.update { subjectState -> subjectState.copy(goalStudyHours = event.hours) }
             }
-
             is SubjectEvent.OnSubjectCardColorChange -> {
                 _state.update { subjectState -> subjectState.copy(subjectCardColors = event.color) }
             }
-
             is SubjectEvent.OnSubjectNameChange -> {
                 _state.update { subjectState -> subjectState.copy(subjectName = event.name) }
             }
-
             is SubjectEvent.OnTaskIsCompleteChange -> {
                 updateTask(event.task)
             }
-
             SubjectEvent.UpdateSubject -> updateSubject()
-
             SubjectEvent.UpdateProgress -> {
                 // coerceIn ensures the value always lies b/w 0 & 1
                 val goalStudyHours = state.value.goalStudyHours.toFloatOrNull() ?: 1f
@@ -204,20 +196,15 @@ constructor(
         }
     }
 
-    private fun deleteSession(){
+    private fun deleteSession() {
         viewModelScope.launch {
             try {
-                state.value.session?.let { session ->
-                    sessionRepository.deleteSession(session)
-                }
+                state.value.session?.let { session -> sessionRepository.deleteSession(session) }
 
                 _snackbarEventFlow.emit(
-                    SnackbarEvent.ShowSnackbar(
-                        message = "Session deleted successfully."
-                    )
+                    SnackbarEvent.ShowSnackbar(message = "Session deleted successfully.")
                 )
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 _snackbarEventFlow.emit(
                     SnackbarEvent.ShowSnackbar(
                         message = "Couldn't delete session.\n ${e.message}",

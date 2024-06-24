@@ -58,10 +58,10 @@ import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_CANCEL
 import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_START
 import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_STOP
 import com.example.studysmartandroidapp.utils.SnackbarEvent
+import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.time.DurationUnit
 
 @Composable
 fun SessionScreenRoute(navController: NavController, timerService: StudySessionTimerService) {
@@ -120,9 +120,17 @@ private fun SessionScreen(
 
     // whenever the state.subjects is changed the launched effect will be called
     LaunchedEffect(key1 = state.subjects) {
+        val subjectId = timerService.subjectId.value
 
+        onEvent(
+            SessionEvent.UpdateSubjectIdAndRelatedSubject(
+                subjectId = subjectId,
+                relatedSubject =
+                    state.subjects.find { subject -> subject.subjectId == subjectId }?.subjectName
+            )
+        )
     }
-    
+
     SubjectListBottomSheet(
         sheetState = sheetState,
         isOpen = isBottomSheetOpen,
@@ -151,17 +159,13 @@ private fun SessionScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        topBar = { SessionScreenTopBar(onBackButtonClick = onBackButtonClick) }) { paddingValue
-        ->
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValue)) {
+        topBar = { SessionScreenTopBar(onBackButtonClick = onBackButtonClick) }
+    ) { paddingValue ->
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(paddingValue)) {
             // timer
             item {
                 TimerSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f),
+                    modifier = Modifier.fillMaxWidth().aspectRatio(1f),
                     // makes the height of the timer section to be whatever is the
                     // width of that section, so the ratio is 1:1
                     hours = hours,
@@ -172,9 +176,7 @@ private fun SessionScreen(
 
             item {
                 RelatedSubjects(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                     relatedSubject = state.relatedSubject ?: "",
                     selectSubjectButtonClick = { isBottomSheetOpen = true },
                     seconds = seconds
@@ -183,23 +185,20 @@ private fun SessionScreen(
 
             item {
                 ButtonsSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
                     onStartButtonClick = {
-                        if(state.subjectId != null && state.relatedSubject != null) {
+                        if (state.subjectId != null && state.relatedSubject != null) {
                             ServiceHelper.triggerForegroundService(
                                 context = context,
                                 action =
-                                if (currentTimerState == TimerState.STARTED) {
-                                    ACTION_SERVICE_STOP
-                                } else ACTION_SERVICE_START
+                                    if (currentTimerState == TimerState.STARTED) {
+                                        ACTION_SERVICE_STOP
+                                    } else ACTION_SERVICE_START
                             )
-                            // to save the subjectId so that if the session screen is restarted 
+                            // to save the subjectId so that if the session screen is restarted
                             // while the  session is ongoing that info isn't lost
                             timerService.subjectId.value = state.subjectId
-                        }
-                        else{
+                        } else {
                             onEvent(SessionEvent.NotifyToUpdateSubject)
                         }
                     },
@@ -212,8 +211,8 @@ private fun SessionScreen(
                     onFinishButtonClick = {
                         val duration = timerService.duration.toLong(DurationUnit.SECONDS)
 
-                        //only be triggered if the duration is more than 36 secs
-                        if(duration >= 36) {
+                        // only be triggered if the duration is more than 36 secs
+                        if (duration >= 36) {
                             ServiceHelper.triggerForegroundService(
                                 context = context,
                                 action = ACTION_SERVICE_CANCEL
@@ -264,9 +263,8 @@ private fun TimerSection(
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Box(
             modifier =
-            Modifier
-                .size(250.dp)
-                .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                Modifier.size(250.dp)
+                    .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
         )
         Row {
             AnimatedContent(
@@ -330,10 +328,7 @@ private fun RelatedSubjects(
         ) {
             Text(text = relatedSubject, style = MaterialTheme.typography.bodyLarge)
 
-            IconButton(
-                enabled = seconds == "00",
-                onClick = selectSubjectButtonClick
-            ) {
+            IconButton(enabled = seconds == "00", onClick = selectSubjectButtonClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Select related subject"
