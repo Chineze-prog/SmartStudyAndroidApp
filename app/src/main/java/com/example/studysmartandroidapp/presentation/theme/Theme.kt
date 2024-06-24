@@ -80,7 +80,7 @@ private val darkScheme =
         inverseOnSurface = inverseOnSurfaceDark,
         inversePrimary = inversePrimaryDark,
     )
-/*
+
 private val mediumContrastLightColorScheme =
     lightColorScheme(
         primary = primaryLightMediumContrast,
@@ -208,7 +208,6 @@ private val highContrastDarkColorScheme =
         inverseOnSurface = inverseOnSurfaceDarkHighContrast,
         inversePrimary = inversePrimaryDarkHighContrast,
     )
-*/
 
 @Immutable
 data class ColorFamily(
@@ -218,10 +217,8 @@ data class ColorFamily(
     val onColorContainer: Color
 )
 
-/*
 val unspecified_scheme =
     ColorFamily(Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified)
-*/
 
 @Composable
 fun StudySmartAndroidAppTheme(
