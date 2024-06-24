@@ -53,6 +53,11 @@ class StudySessionTimerService : Service() {
 
     @Inject lateinit var notificationBuilder: NotificationCompat.Builder
 
+    // we're keeping this value here because when the app is closed the session screen is destroyed
+    // and then remade but only the timers info is saved so we need to also save the relatedSubject
+    // info
+    var subjectId = mutableStateOf<Int?>(null)
+
     private lateinit var timer: Timer
 
     private val binder = StudySessionTimerBinder()

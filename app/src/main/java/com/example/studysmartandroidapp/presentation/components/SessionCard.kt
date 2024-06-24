@@ -20,9 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.studysmartandroidapp.domain.model.Session
 import com.example.studysmartandroidapp.utils.changeMillisToDateString
-import com.example.studysmartandroidapp.utils.toLocalDate
-import java.time.LocalDate
-import java.time.ZoneOffset
+import com.example.studysmartandroidapp.utils.toHours
 
 @Composable
 fun StudySessionCard(modifier: Modifier = Modifier, session: Session, onDeleteClick: () -> Unit) {
@@ -39,30 +37,14 @@ fun StudySessionCard(modifier: Modifier = Modifier, session: Session, onDeleteCl
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text =
-                        if (
-                            session.date.toLocalDate() <
-                                LocalDate.now()
-                                    .atStartOfDay(ZoneOffset.UTC)
-                                    .toInstant()
-                                    .toEpochMilli()
-                                    .toLocalDate()
-                        ) {
-                            LocalDate.now()
-                                .atStartOfDay(ZoneOffset.UTC)
-                                .toInstant()
-                                .toEpochMilli()
-                                .changeMillisToDateString()
-                        } else {
-                            session.date.changeMillisToDateString()
-                        },
+                    text = session.date.changeMillisToDateString(),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Text(text = "${session.duration} hr", style = MaterialTheme.typography.titleMedium)
+            Text(text = "${session.duration.toHours()} hr", style = MaterialTheme.typography.titleMedium)
 
             IconButton(onClick = onDeleteClick) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Session")

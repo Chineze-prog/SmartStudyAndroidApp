@@ -55,6 +55,8 @@ fun LazyListScope.studySessionsList(
                     color = Color.Gray,
                     textAlign = TextAlign.Center
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -65,5 +67,8 @@ fun LazyListScope.studySessionsList(
             session = session,
             onDeleteClick = { onDeleteIconClick(session) }
         )
+    }
+    item {
+        Spacer(modifier = Modifier.height(30.dp))
     }
 }

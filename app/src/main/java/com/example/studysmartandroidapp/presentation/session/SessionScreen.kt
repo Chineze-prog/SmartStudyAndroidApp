@@ -30,10 +30,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,22 +49,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.studysmartandroidapp.presentation.components.DeleteDialogue
 import com.example.studysmartandroidapp.presentation.components.SubjectListBottomSheet
 import com.example.studysmartandroidapp.presentation.components.studySessionsList
-import com.example.studysmartandroidapp.sessions
-import com.example.studysmartandroidapp.subjects
 import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_CANCEL
 import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_START
 import com.example.studysmartandroidapp.utils.Constants.ACTION_SERVICE_STOP
+import com.example.studysmartandroidapp.utils.SnackbarEvent
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.time.DurationUnit
 
 @Composable
 fun SessionScreenRoute(navController: NavController, timerService: StudySessionTimerService) {
     val viewModel: SessionViewModel = hiltViewModel()
 
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     SessionScreen(
+        state = state,
+        onEvent = viewModel::onEvent,
+        snackbarEvent = viewModel.snackbarEventFlow,
         onBackButtonClick = { navController.navigate("dashboard") },
         timerService = timerService
     )
@@ -69,31 +80,60 @@ fun SessionScreenRoute(navController: NavController, timerService: StudySessionT
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SessionScreen(onBackButtonClick: () -> Unit, timerService: StudySessionTimerService) {
+private fun SessionScreen(
+    state: SessionState,
+    onEvent: (SessionEvent) -> Unit,
+    snackbarEvent: SharedFlow<SnackbarEvent>,
+    onBackButtonClick: () -> Unit,
+    timerService: StudySessionTimerService
+) {
     val hours by timerService.hours
     val minutes by timerService.minutes
     val seconds by timerService.seconds
     val currentTimerState by timerService.currentTimerState
 
-    // context
     val context = LocalContext.current
 
-    var relatedSubject by remember { mutableStateOf("") }
-    val sheetState = rememberModalBottomSheetState()
-    var isBottomSheetOpen by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    val sheetState = rememberModalBottomSheetState()
+
+    var isBottomSheetOpen by remember { mutableStateOf(false) }
+
     var isDeleteSessionDialogueOpen by remember { mutableStateOf(false) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        snackbarEvent.collectLatest { event ->
+            when (event) {
+                is SnackbarEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                        duration = event.duration
+                    )
+                }
+                SnackbarEvent.NavigateUp -> {}
+            }
+        }
+    }
+
+    // whenever the state.subjects is changed the launched effect will be called
+    LaunchedEffect(key1 = state.subjects) {
+
+    }
+    
     SubjectListBottomSheet(
         sheetState = sheetState,
         isOpen = isBottomSheetOpen,
-        subjects = subjects,
+        subjects = state.subjects,
         // how to dismiss a bottom sheet if not through the onDismissRequest
-        onSubjectClick = {
+        onSubjectClick = { subject ->
             scope
                 .launch { sheetState.hide() }
                 .invokeOnCompletion { if (!sheetState.isVisible) isBottomSheetOpen = false }
-            relatedSubject = it.subjectName
+
+            onEvent(SessionEvent.OnRelatedSubjectChange(subject))
         },
         onDismissRequest = { isBottomSheetOpen = false }
     )
@@ -103,16 +143,25 @@ private fun SessionScreen(onBackButtonClick: () -> Unit, timerService: StudySess
         title = "Delete Session?",
         bodyText = "Are you sure you want to delete this session?\nTHIS ACTION CANNOT BE UNDONE.",
         onDismissRequest = { isDeleteSessionDialogueOpen = false },
-        onConfirmButtonClick = { isDeleteSessionDialogueOpen = false }
+        onConfirmButtonClick = {
+            onEvent(SessionEvent.DeleteSession)
+            isDeleteSessionDialogueOpen = false
+        }
     )
 
-    Scaffold(topBar = { SessionScreenTopBar(onBackButtonClick = onBackButtonClick) }) { paddingValue
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = { SessionScreenTopBar(onBackButtonClick = onBackButtonClick) }) { paddingValue
         ->
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(paddingValue)) {
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValue)) {
             // timer
             item {
                 TimerSection(
-                    modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
                     // makes the height of the timer section to be whatever is the
                     // width of that section, so the ratio is 1:1
                     hours = hours,
@@ -123,23 +172,36 @@ private fun SessionScreen(onBackButtonClick: () -> Unit, timerService: StudySess
 
             item {
                 RelatedSubjects(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
-                    relatedSubject = relatedSubject,
-                    selectSubjectButtonClick = { isBottomSheetOpen = true }
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    relatedSubject = state.relatedSubject ?: "",
+                    selectSubjectButtonClick = { isBottomSheetOpen = true },
+                    seconds = seconds
                 )
             }
 
             item {
                 ButtonsSection(
-                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
                     onStartButtonClick = {
-                        ServiceHelper.triggerForegroundService(
-                            context = context,
-                            action =
+                        if(state.subjectId != null && state.relatedSubject != null) {
+                            ServiceHelper.triggerForegroundService(
+                                context = context,
+                                action =
                                 if (currentTimerState == TimerState.STARTED) {
                                     ACTION_SERVICE_STOP
                                 } else ACTION_SERVICE_START
-                        )
+                            )
+                            // to save the subjectId so that if the session screen is restarted 
+                            // while the  session is ongoing that info isn't lost
+                            timerService.subjectId.value = state.subjectId
+                        }
+                        else{
+                            onEvent(SessionEvent.NotifyToUpdateSubject)
+                        }
                     },
                     onCancelButtonClick = {
                         ServiceHelper.triggerForegroundService(
@@ -147,7 +209,18 @@ private fun SessionScreen(onBackButtonClick: () -> Unit, timerService: StudySess
                             action = ACTION_SERVICE_CANCEL
                         )
                     },
-                    onFinishButtonClick = {},
+                    onFinishButtonClick = {
+                        val duration = timerService.duration.toLong(DurationUnit.SECONDS)
+
+                        //only be triggered if the duration is more than 36 secs
+                        if(duration >= 36) {
+                            ServiceHelper.triggerForegroundService(
+                                context = context,
+                                action = ACTION_SERVICE_CANCEL
+                            )
+                        }
+                        onEvent(SessionEvent.SaveSession(duration))
+                    },
                     timerState = currentTimerState,
                     seconds = seconds
                 )
@@ -155,11 +228,14 @@ private fun SessionScreen(onBackButtonClick: () -> Unit, timerService: StudySess
 
             studySessionsList(
                 sectionTitle = "STUDY SESSIONS HISTORY",
-                sessions = sessions,
+                sessions = state.sessions,
                 emptyListText =
                     "You don't have any recent study sessions.\n Start a study " +
                         "session to begin recording your progress.\n",
-                onDeleteIconClick = { isDeleteSessionDialogueOpen = true }
+                onDeleteIconClick = { session ->
+                    onEvent(SessionEvent.OnDeleteSessionButtonClick(session))
+                    isDeleteSessionDialogueOpen = true
+                }
             )
         }
     }
@@ -188,8 +264,9 @@ private fun TimerSection(
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Box(
             modifier =
-                Modifier.size(250.dp)
-                    .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+            Modifier
+                .size(250.dp)
+                .border(5.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
         )
         Row {
             AnimatedContent(
@@ -240,7 +317,8 @@ private fun timerTextAnimation(duration: Int = 600): ContentTransform {
 private fun RelatedSubjects(
     modifier: Modifier,
     relatedSubject: String,
-    selectSubjectButtonClick: () -> Unit
+    selectSubjectButtonClick: () -> Unit,
+    seconds: String
 ) {
     Column(modifier = modifier) {
         Text(text = "Related to subject", style = MaterialTheme.typography.bodySmall)
@@ -252,7 +330,10 @@ private fun RelatedSubjects(
         ) {
             Text(text = relatedSubject, style = MaterialTheme.typography.bodyLarge)
 
-            IconButton(onClick = selectSubjectButtonClick) {
+            IconButton(
+                enabled = seconds == "00",
+                onClick = selectSubjectButtonClick
+            ) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Select related subject"
